@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InfluxDB + Grafana | Monitor Proxmox Cluster | Ahmed</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        .blog-post {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        .blog-post h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            text-shadow: var(--glow-primary);
+        }
+        .blog-post h2 {
+            font-size: 2rem;
+            margin: 3rem 0 1.5rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        .blog-post h3 {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+        .blog-post h4 {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--text-secondary);
+        }
+        .blog-post p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+        .blog-post strong {
+            color: var(--primary-color);
+        }
+        .blog-post ul, .blog-post ol {
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+            color: var(--text-secondary);
+        }
+        .blog-post li {
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+        .blog-post pre {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        .blog-post code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+        }
+        .blog-post img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 2rem 0;
+            border: 1px solid var(--border-color);
+        }
+        .blog-post table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+        }
+        .blog-post th, .blog-post td {
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            text-align: left;
+        }
+        .blog-post th {
+            background: var(--bg-card);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        .blog-post td {
+            color: var(--text-secondary);
+        }
+        .architecture-diagram {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+            font-family: monospace;
+            margin: 2rem 0;
+            border: 1px solid var(--border-color);
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 2rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            border-color: var(--primary-color);
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/netops.jpg" alt="NetOps Journal Logo" class="nav-logo-img">
+                <div class="nav-logo-text">
+                    <a href="index.html">NetOps Journal</a>
+                    <span class="nav-logo-tagline">Where networking meets automation.</span>
+                </div>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link">Categories</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="index.html#all">All</a></li>
+                        <li><a href="index.html#automation">Automation</a></li>
+                        <li><a href="index.html#opensource">Open-source</a></li>
+                        <li><a href="index.html#cisco">Cisco Technologies</a></li>
+                        <li><a href="index.html#juniper">Juniper Technologies</a></li>
+                        <li><a href="index.html#homeautomation">Home-Automation</a></li>
+                        <li><a href="index.html#homelab">Home-Lab</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="index.html" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="about.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <span class="theme-toggle-icon">🎨</span>
+        <span class="theme-toggle-text">Change Theme</span>
+    </button>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <article class="blog-post">
+                <a href="index.html" class="back-button">← Back to Blog</a>
+                
+                <h1>📊 InfluxDB + Grafana | Monitor Proxmox Cluster in EASY MODE! 🚀</h1>
+                
+                <p>Welcome to the <strong>Proxmox Home Server Series</strong>! This guide walks you through the <strong>easiest way to monitor your Proxmox cluster</strong> using <strong>InfluxDB</strong> and <strong>Grafana</strong>—no Telegraf required. Perfect for your home lab or small-scale virtualization setup. 🖥️📈</p>
+
+                <hr>
+
+                <h2>🎯 Overview</h2>
+                <p>This monitoring solution provides <strong>enterprise-grade observability</strong> for your Proxmox cluster with minimal complexity. By leveraging native Proxmox metrics collection, we eliminate the need for additional agents while maintaining comprehensive monitoring coverage.</p>
+
+                <h3>✨ Key Benefits</h3>
+                <ul>
+                    <li>🚀 <strong>Zero Agent Overhead</strong> - Native Proxmox metrics collection</li>
+                    <li>📊 <strong>Real-time Dashboards</strong> - Beautiful Grafana visualizations</li>
+                    <li>🔍 <strong>Comprehensive Coverage</strong> - CPU, Memory, Storage, Network, VM metrics</li>
+                    <li>🛡️ <strong>Production Ready</strong> - Scalable and reliable architecture</li>
+                    <li>💡 <strong>Easy Maintenance</strong> - Simple setup and configuration</li>
+                </ul>
+
+                <h2>🔧 Architecture</h2>
+                <div class="architecture-diagram">
+<pre>
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Proxmox VE    │───▶│    InfluxDB     │───▶│     Grafana     │
+│   (v7.x/v8.x)   │    │   (Time Series) │    │  (Dashboards)   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+        │                       │                       │
+        │                       │                       │
+   Metrics Push            Data Storage          Visualization
+</pre>
+                </div>
+
+                <img src="https://github.com/user-attachments/assets/ace29d07-842d-40c0-aa7b-ff3d41a54093" alt="Proxmox Monitoring Dashboard">
+
+                <h2>📋 Requirements</h2>
+
+                <h3>🖥️ System Requirements</h3>
+                <ul>
+                    <li><strong>Proxmox VE</strong>: v7.x or v8.x (single node or cluster)</li>
+                    <li><strong>Monitoring Host</strong>: Ubuntu 20.04+ / Debian 11+ (VM or container)</li>
+                    <li><strong>Resources</strong>:
+                        <ul>
+                            <li>CPU: 2 cores minimum</li>
+                            <li>RAM: 4GB minimum</li>
+                            <li>Storage: 50GB+ (SSD recommended)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Network</strong>: Stable connectivity between Proxmox and monitoring host</li>
+                </ul>
+
+                <h3>🔧 Prerequisites</h3>
+                <ul>
+                    <li>✅ Root or sudo access on monitoring host</li>
+                    <li>✅ Basic command-line proficiency</li>
+                    <li>✅ Network access to Proxmox nodes</li>
+                    <li>✅ Internet connectivity for package installation</li>
+                </ul>
+
+                <h2>🛠️ Installation Guide</h2>
+
+                <h3>Step 1: Install InfluxDB 2.x</h3>
+                <pre><code># Add InfluxData repository
+wget -qO- https://repos.influxdata.com/influxdb.key | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/influxdb.gpg
+echo "deb https://repos.influxdata.com/debian stable main" | sudo tee /etc/apt/sources.list.d/influxdb.list
+
+# Update package list and install InfluxDB
+sudo apt update && sudo apt install influxdb2
+
+# Enable and start InfluxDB service
+sudo systemctl enable --now influxdb
+
+# Verify installation
+sudo systemctl status influxdb</code></pre>
+
+                <p><strong>🔗 Access InfluxDB</strong>: Navigate to <code>http://&lt;influxdb-ip&gt;:8086</code></p>
+
+                <p><strong>📝 Initial Setup</strong>:</p>
+                <ol>
+                    <li>Create an <strong>Organization</strong> (e.g., "homelab")</li>
+                    <li>Create a <strong>Bucket</strong> (e.g., "proxmox-metrics")</li>
+                    <li>Generate an <strong>API Token</strong> with write permissions</li>
+                    <li><strong>Save the token</strong> - you'll need it for Proxmox configuration</li>
+                </ol>
+
+                <h3>Step 2: Install Grafana</h3>
+                <pre><code># Add Grafana repository
+sudo apt install -y apt-transport-https software-properties-common
+wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
+
+# Install Grafana
+sudo apt update && sudo apt install grafana
+
+# Enable and start Grafana service
+sudo systemctl enable --now grafana-server
+
+# Verify installation
+sudo systemctl status grafana-server</code></pre>
+
+                <p><strong>🔗 Access Grafana</strong>: Navigate to <code>http://&lt;grafana-ip&gt;:3000</code></p>
+                <p><strong>📝 Initial Login</strong>: Username: <code>admin</code> / Password: <code>admin</code> (<strong>Change password</strong> on first login)</p>
+
+                <h3>Step 3: Configure Proxmox Metrics Collection</h3>
+
+                <h4>3.1 Edit Proxmox Configuration</h4>
+                <pre><code># Edit the status configuration file
+sudo nano /etc/pve/status.cfg</code></pre>
+
+                <h4>3.2 Add InfluxDB Configuration</h4>
+                <pre><code># InfluxDB Metrics Configuration
+influxdb:
+  server YOUR_INFLUXDB_IP
+  port 8086
+  org YOUR_ORG_NAME
+  bucket YOUR_BUCKET_NAME
+  token YOUR_API_TOKEN
+  verify-ssl false
+  max-body-size 25M</code></pre>
+
+                <h4>🔧 Configuration Parameters:</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Description</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>server</code></td>
+                            <td>InfluxDB server IP/hostname</td>
+                            <td>192.168.1.100</td>
+                        </tr>
+                        <tr>
+                            <td><code>port</code></td>
+                            <td>InfluxDB HTTP port</td>
+                            <td>8086</td>
+                        </tr>
+                        <tr>
+                            <td><code>org</code></td>
+                            <td>InfluxDB organization name</td>
+                            <td>homelab</td>
+                        </tr>
+                        <tr>
+                            <td><code>bucket</code></td>
+                            <td>InfluxDB bucket name</td>
+                            <td>proxmox-metrics</td>
+                        </tr>
+                        <tr>
+                            <td><code>token</code></td>
+                            <td>InfluxDB API token</td>
+                            <td>your-api-token-here</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>3.3 Apply Configuration</h4>
+                <pre><code># Restart Proxmox services to apply changes
+sudo systemctl restart pveproxy
+sudo systemctl restart pvedaemon
+
+# Verify metrics are being sent
+sudo journalctl -u pvedaemon -f</code></pre>
+
+                <img src="https://github.com/user-attachments/assets/73b11f54-63ce-42df-ab4a-6c24b92d25ee" alt="InfluxDB Metrics">
+
+                <h2>📊 Metrics Overview</h2>
+
+                <h3>🖥️ System Metrics</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric Category</th>
+                            <th>Description</th>
+                            <th>Collection Frequency</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>CPU Usage</strong></td>
+                            <td>Per-core and overall CPU utilization</td>
+                            <td>30s</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Memory Usage</strong></td>
+                            <td>RAM usage, swap, and memory pressure</td>
+                            <td>30s</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Storage I/O</strong></td>
+                            <td>Disk read/write operations and latency</td>
+                            <td>30s</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Network I/O</strong></td>
+                            <td>Network throughput and packet statistics</td>
+                            <td>30s</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>🔍 Troubleshooting</h2>
+
+                <h3>Common Issues</h3>
+
+                <h4>1. Metrics Not Appearing in Grafana</h4>
+                <pre><code># Check InfluxDB connectivity
+curl -H "Authorization: Token YOUR_TOKEN" \
+     "http://YOUR_INFLUXDB_IP:8086/api/v2/buckets?org=YOUR_ORG"
+
+# Verify Proxmox configuration
+sudo cat /etc/pve/status.cfg
+
+# Check Proxmox logs
+sudo journalctl -u pvedaemon -n 50</code></pre>
+
+                <img src="https://github.com/user-attachments/assets/286e6f71-6baf-4b0f-9842-6bd6ba09d36a" alt="InfluxDB Configuration">
+
+                <h4>2. Data Retention</h4>
+                <pre><code># Set retention policy (30 days for homelab)
+influx bucket update --name proxmox-metrics --retention 30d</code></pre>
+
+                <img src="https://github.com/user-attachments/assets/55633fe2-c9a2-453e-ae76-bec3dba2f6cc" alt="Data Retention Settings">
+
+                <h2>🔒 Security Considerations</h2>
+
+                <h3>Network Security</h3>
+                <pre><code># Configure firewall rules
+sudo ufw allow from PROXMOX_IP to any port 8086
+sudo ufw allow from PROXMOX_IP to any port 3000
+
+# Use reverse proxy for external access
+sudo apt install nginx</code></pre>
+
+                <img src="https://github.com/user-attachments/assets/783e7161-a4e9-4891-82e6-cf6743cd3c3b" alt="Monitoring Dashboard">
+
+                <h2>📈 Maintenance</h2>
+
+                <h3>Backup Procedures</h3>
+                <pre><code># Backup InfluxDB data
+influx backup /backup/influxdb --bucket proxmox-metrics
+
+# Backup Grafana configuration
+sudo tar -czf grafana-backup.tar.gz /etc/grafana/</code></pre>
+
+                <img src="https://github.com/user-attachments/assets/9ea16c84-add4-4c6f-97f9-2680716fc890" alt="Backup Configuration">
+
+                <h3>Log Aggregation</h3>
+                <pre><code># Configure log forwarding
+sudo journalctl -u influxdb -f | logger -t influxdb
+sudo journalctl -u grafana-server -f | logger -t grafana</code></pre>
+
+                <img src="https://github.com/user-attachments/assets/c821a94c-a4d7-4cca-bc2a-c74f2d158420" alt="Log Aggregation">
+
+                <h2>📚 References</h2>
+
+                <h3>Official Documentation</h3>
+                <ul>
+                    <li>📖 <a href="https://pve.proxmox.com/wiki/Main_Page" target="_blank">Proxmox VE Documentation</a></li>
+                    <li>📖 <a href="https://docs.influxdata.com/" target="_blank">InfluxDB Documentation</a></li>
+                    <li>📖 <a href="https://grafana.com/docs/" target="_blank">Grafana Documentation</a></li>
+                </ul>
+
+                <h3>Community Resources</h3>
+                <ul>
+                    <li>🎯 <a href="https://forum.proxmox.com/" target="_blank">Proxmox Community Forums</a></li>
+                    <li>🎯 <a href="https://grafana.com/grafana/dashboards/" target="_blank">Grafana Community Dashboards</a></li>
+                    <li>🎯 <a href="https://community.influxdata.com/" target="_blank">InfluxDB Community</a></li>
+                </ul>
+
+                <hr>
+
+                <p><strong>Found this helpful? Share it with your homelab community! 🚀</strong></p>
+                
+                <a href="index.html" class="back-button">← Back to Blog</a>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="imprint.html">Imprint</a>
+            </div>
+            <div class="footer-copyright">
+                <p>Copyright © Ahmed 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

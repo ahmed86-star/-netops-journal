@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Me | Ahmed</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/netops.jpg" alt="NetOps Journal Logo" class="nav-logo-img">
+                <div class="nav-logo-text">
+                    <a href="index.html">NetOps Journal</a>
+                    <span class="nav-logo-tagline">Where networking meets automation.</span>
+                </div>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link">Categories</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="index.html#all">All</a></li>
+                        <li><a href="index.html#automation">Automation</a></li>
+                        <li><a href="index.html#opensource">Open-source</a></li>
+                        <li><a href="index.html#cisco">Cisco Technologies</a></li>
+                        <li><a href="index.html#juniper">Juniper Technologies</a></li>
+                        <li><a href="index.html#homeautomation">Home-Automation</a></li>
+                        <li><a href="index.html#homelab">Home-Lab</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="index.html" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Skip to content -->
+    <a href="#main-content" class="skip-link">Skip to content</a>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <span class="theme-toggle-icon">🎨</span>
+        <span class="theme-toggle-text">Change Theme</span>
+    </button>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">🎯 About Me</h1>
+                <p class="hero-subtitle">Home Lab Architect & Cybersecurity Enthusiast</p>
+                <p class="hero-description">Building • Breaking • Securing</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+        <div class="container">
+            <!-- Profile Picture Section -->
+            <section class="profile-section">
+                <div class="profile-image-container">
+                    <img src="images/profile.jpg" alt="Ahmed - Home Lab Architect" class="profile-image">
+                </div>
+            </section>
+
+            <!-- Introduction Section -->
+            <section class="intro-section">
+                <div class="intro-content">
+                    <h2 class="intro-greeting">👋 Hey, I'm Ahmed</h2>
+                    
+                    <p class="intro-text">
+                        I write about <strong>Automation & Networking</strong> — sharing an insider's view on how I leverage automation tools like Python 🐍, Ansible ⚙️, Terraform 🌍, and Bash 💻.
+                    </p>
+                    
+                    <p class="intro-text">
+                        💼 As a <strong>Technician II at Meta</strong>, I focus on Datacenter Technologies — exploring how automation transforms infrastructure at scale.
+                    </p>
+                    
+                    <div class="intro-card">
+                        <h3 class="intro-subtitle">🔧 What You'll Find Here</h3>
+                        
+                        <ul class="intro-list">
+                            <li>🐍 <strong>Projects & Labs</strong> with Python, Ansible, Terraform, and Bash</li>
+                            <li>🧰 <strong>Tools & Platforms</strong> like GitLab, AWX</li>
+                            <li>🌐 <strong>Networking deep dives</strong> — Cisco DNA Center, Juniper Technologies</li>
+                            <li>🎓 <strong>Certifications</strong> — CCNA & JNCIA/JUNOS study notes and resources</li>
+                            <li>☁️ <strong>Cloud & Containerization</strong> — AWS, Kubernetes, Docker</li>
+                        </ul>
+                    </div>
+                    
+                    <p class="intro-goal">
+                        💭 My goal is to document what I learn, break down complex setups, and inspire other engineers building their own automation and home lab journeys.
+                    </p>
+                </div>
+            </section>
+
+            <!-- About Section -->
+            <section class="about-section">
+                <div class="about-content">
+                    <div class="about-card">
+                        <h2>🛡️ Home Lab Adventures</h2>
+                        <p>My home lab is my cyber playground where I turn theory into practice:</p>
+                        <ul class="features-list">
+                            <li>Building enterprise-grade security infrastructure</li>
+                            <li>Testing attack and defense scenarios</li>
+                            <li>Experimenting with cutting-edge technologies</li>
+                            <li>Creating robust, scalable solutions</li>
+                        </ul>
+                    </div>
+
+                    <div class="about-card">
+                        <h2>🎯 Expertise Domains</h2>
+                        <p>Areas where I'm constantly pushing my boundaries:</p>
+                        <div class="expertise-grid">
+                            <div class="expertise-item">
+                                <h3>🌐 Network Security</h3>
+                                <ul>
+                                    <li>Wireshark Mastery</li>
+                                    <li>Traffic Analysis</li>
+                                    <li>Threat Hunting</li>
+                                </ul>
+                            </div>
+                            <div class="expertise-item">
+                                <h3>☁️ Cloud Security</h3>
+                                <ul>
+                                    <li>Infrastructure Hardening</li>
+                                    <li>Security Architecture</li>
+                                    <li>Cloud-Native Defense</li>
+                                </ul>
+                            </div>
+                            <div class="expertise-item">
+                                <h3>🔐 Penetration Testing</h3>
+                                <ul>
+                                    <li>Kali Linux</li>
+                                    <li>Vulnerability Assessment</li>
+                                    <li>System Hardening</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="about-card">
+                        <h2>💻 Technical Arsenal</h2>
+                        <p>My weapons of choice in the cybersecurity battlefield:</p>
+                        <div class="arsenal-grid">
+                            <div class="arsenal-item">
+                                <h3>🖥️ Operating Systems</h3>
+                                <div class="tags">
+                                    <span class="tag">Windows Server</span>
+                                    <span class="tag">Ubuntu Server</span>
+                                    <span class="tag">Kali Linux</span>
+                                </div>
+                            </div>
+                            <div class="arsenal-item">
+                                <h3>🔄 Virtualization</h3>
+                                <div class="tags">
+                                    <span class="tag">Proxmox</span>
+                                    <span class="tag">VirtualBox</span>
+                                    <span class="tag">TrueNAS</span>
+                                </div>
+                            </div>
+                            <div class="arsenal-item">
+                                <h3>🌐 Networking</h3>
+                                <div class="tags">
+                                    <span class="tag">Wireshark</span>
+                                    <span class="tag">pfSense</span>
+                                    <span class="tag">Enterprise Firewalls</span>
+                                </div>
+                            </div>
+                            <div class="arsenal-item">
+                                <h3>⌨️ Development</h3>
+                                <div class="tags">
+                                    <span class="tag">Python</span>
+                                    <span class="tag">Bash Scripting</span>
+                                    <span class="tag">SQL</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="about-card">
+                        <h2>🚀 Active Projects</h2>
+                        <p>Currently building and breaking things:</p>
+                        <ul class="projects-list">
+                            <li>🔐 Advanced threat detection lab with Security Onion</li>
+                            <li>🌐 Multi-site VPN infrastructure with redundancy</li>
+                            <li>🤖 Automated security compliance scanning pipeline</li>
+                            <li>📊 Custom SIEM dashboard with real-time analytics</li>
+                        </ul>
+                    </div>
+
+                    <div class="about-card social-section" id="contact">
+                        <h2>🤝 Let's Connect!</h2>
+                        <p>Ready to collaborate on making cyberspace more secure?</p>
+                        <div class="social-links">
+                            <a href="https://github.com/ahmed86-star" target="_blank" class="social-btn github">
+                                <span class="icon">🐙</span>
+                                <span>GitHub</span>
+                            </a>
+                            <a href="https://tryhackme.com/p/AHMED1" target="_blank" class="social-btn tryhackme">
+                                <span class="icon">🎯</span>
+                                <span>TryHackMe</span>
+                            </a>
+                            <a href="https://leetcode.com/ahmed86-star" target="_blank" class="social-btn leetcode">
+                                <span class="icon">💻</span>
+                                <span>LeetCode</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quote Section -->
+            <section class="quote-section">
+                <blockquote class="inspirational-quote">
+                    <p>"In the world of cybersecurity, you're either one step ahead or one breach behind. I choose to stay ahead."</p>
+                    <cite>— Security Mindset</cite>
+                </blockquote>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="imprint.html">Imprint</a>
+            </div>
+            <div class="footer-copyright">
+                <p>Copyright © Ahmed 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

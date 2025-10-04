@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homelab Infrastructure Documentation | Ahmed</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        .blog-post {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        .blog-post h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            text-shadow: var(--glow-primary);
+            text-align: center;
+        }
+        .blog-post h2 {
+            font-size: 2rem;
+            margin: 3rem 0 1.5rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        .blog-post h3 {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+        .blog-post h4 {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--text-secondary);
+        }
+        .blog-post p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+        .blog-post strong {
+            color: var(--primary-color);
+        }
+        .blog-post ul, .blog-post ol {
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+            color: var(--text-secondary);
+        }
+        .blog-post li {
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+        .blog-post table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            overflow-x: auto;
+            display: block;
+        }
+        .blog-post th, .blog-post td {
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            text-align: left;
+        }
+        .blog-post th {
+            background: var(--bg-card);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        .blog-post td {
+            color: var(--text-secondary);
+        }
+        .blog-post img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 2rem auto;
+            display: block;
+            border: 1px solid var(--border-color);
+        }
+        .blog-post pre, .blog-post code {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            display: block;
+            margin: 1.5rem 0;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 2rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            border-color: var(--primary-color);
+            transform: translateX(-5px);
+        }
+        .badges {
+            text-align: center;
+            margin: 2rem 0;
+        }
+        .badge {
+            display: inline-block;
+            margin: 0.25rem;
+        }
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .tech-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .tech-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+        hr {
+            border: none;
+            border-top: 2px solid var(--border-color);
+            margin: 3rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/netops.jpg" alt="NetOps Journal Logo" class="nav-logo-img">
+                <div class="nav-logo-text">
+                    <a href="index.html">NetOps Journal</a>
+                    <span class="nav-logo-tagline">Where networking meets automation.</span>
+                </div>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link">Categories</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="index.html#all">All</a></li>
+                        <li><a href="index.html#automation">Automation</a></li>
+                        <li><a href="index.html#opensource">Open-source</a></li>
+                        <li><a href="index.html#cisco">Cisco Technologies</a></li>
+                        <li><a href="index.html#juniper">Juniper Technologies</a></li>
+                        <li><a href="index.html#homeautomation">Home-Automation</a></li>
+                        <li><a href="index.html#homelab">Home-Lab</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="index.html" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="about.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <span class="theme-toggle-icon">🎨</span>
+        <span class="theme-toggle-text">Change Theme</span>
+    </button>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <article class="blog-post">
+                <a href="index.html" class="back-button">← Back to Blog</a>
+                
+                <h1>🏠 Homelab Infrastructure Documentation</h1>
+
+                <div class="badges">
+                    <span class="badge">
+                        <a href="https://github.com/ahmed86-star/Homelab" target="_blank">
+                            <img src="https://img.shields.io/github/stars/ahmed86-star/Homelab?style=social" alt="GitHub Stars">
+                        </a>
+                    </span>
+                    <span class="badge">
+                        <a href="https://github.com/ahmed86-star/Homelab" target="_blank">
+                            <img src="https://img.shields.io/github/last-commit/ahmed86-star/Homelab?logo=git&logoColor=white" alt="Last Commit">
+                        </a>
+                    </span>
+                    <span class="badge"><img src="https://img.shields.io/badge/docs-ahmed1.live-blue?logo=hugo&logoColor=white" alt="Documentation"></span>
+                    <span class="badge"><img src="https://img.shields.io/badge/license-MIT-green.svg?logo=opensourceinitiative&logoColor=white" alt="License"></span>
+                    <span class="badge"><img src="https://img.shields.io/badge/docker-ready-blue?logo=docker&logoColor=white" alt="Docker"></span>
+                </div>
+                
+                <div style="text-align: center; margin: 2rem 0;">
+                    <a href="https://github.com/ahmed86-star/Homelab" target="_blank" style="display: inline-block; padding: 1rem 2rem; background: var(--primary-color); color: var(--bg-primary); text-decoration: none; border-radius: 8px; font-weight: 700; transition: all 0.3s ease; box-shadow: var(--glow-primary);">
+                        🔗 View Repository on GitHub
+                    </a>
+                </div>
+
+                <div style="background: var(--bg-card); border: 2px solid var(--primary-color); border-radius: 12px; padding: 2rem; margin: 2rem 0; text-align: center;">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary-color);">📂 GitHub Repository</h3>
+                    <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Explore the complete source code, scripts, and documentation for this homelab infrastructure</p>
+                    <a href="https://github.com/ahmed86-star/Homelab" target="_blank" style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 0.875rem 2rem; background: var(--bg-primary); border: 2px solid var(--primary-color); color: var(--primary-color); text-decoration: none; border-radius: 8px; font-weight: 600; transition: all 0.3s ease;">
+                        <img src="https://img.shields.io/badge/GitHub-Repository-black?style=flat&logo=github&logoColor=white" alt="GitHub Repository" style="border: none; margin: 0;">
+                        <span>ahmed86-star/Homelab</span>
+                    </a>
+                </div>
+
+                <hr>
+
+                <h2>🚀 Welcome to My Homelab Journey!</h2>
+                <p>Welcome to my <strong>enterprise-grade homelab infrastructure</strong>! This repository showcases my journey in building and maintaining a professional home lab environment for learning, testing, and self-hosting various services.</p>
+
+                <h3>🎯 What You'll Find Here</h3>
+                <ul>
+                    <li><strong>🏗️ Infrastructure Documentation</strong>: Complete setup guides and configurations</li>
+                    <li><strong>🔧 Self-Hosted Services</strong>: 15+ production-ready applications</li>
+                    <li><strong>📊 Monitoring & Analytics</strong>: Real-time system insights and dashboards</li>
+                    <li><strong>🔒 Security & Privacy</strong>: Enterprise-grade security implementations</li>
+                    <li><strong>📚 Learning Resources</strong>: Guides, tutorials, and best practices</li>
+                </ul>
+
+                <h3>🌟 Featured Technologies</h3>
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <img src="https://img.shields.io/badge/Proxmox-E57000?style=for-the-badge&logo=proxmox&logoColor=white" alt="Proxmox">
+                    </div>
+                    <div class="tech-card">
+                        <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
+                    </div>
+                    <div class="tech-card">
+                        <img src="https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white" alt="Grafana">
+                    </div>
+                    <div class="tech-card">
+                        <img src="https://img.shields.io/badge/InfluxDB-22ADF6?style=for-the-badge&logo=influxdb&logoColor=white" alt="InfluxDB">
+                    </div>
+                    <div class="tech-card">
+                        <img src="https://img.shields.io/badge/Synology-00B2FF?style=for-the-badge&logo=synology&logoColor=white" alt="Synology">
+                    </div>
+                </div>
+
+                <img src="https://github.com/user-attachments/assets/051afc2a-6f90-461a-9262-b7e57d2585a3" alt="Homelab Infrastructure">
+
+                <h2>🌟 Infrastructure Overview</h2>
+
+                <h3>🖥️ Compute Resources</h3>
+
+                <h4>Proxmox Virtual Environment Cluster</h4>
+                <p><strong>Enterprise-grade virtualization platform</strong> with high availability and advanced management capabilities.</p>
+
+                <p><strong>🔧 Core Features:</strong></p>
+                <ul>
+                    <li><strong>High Availability (HA)</strong> setup with multiple nodes for redundancy</li>
+                    <li><strong>Resource monitoring</strong> and intelligent load balancing</li>
+                    <li><strong>Container & VM support</strong> with LXC and KVM virtualization</li>
+                    <li><strong>ZFS storage integration</strong> for enterprise-grade data integrity</li>
+                    <li><strong>Live migration</strong> between cluster nodes</li>
+                    <li><strong>Backup & restore</strong> with deduplication support</li>
+                </ul>
+
+                <p><strong>📊 Cluster Configuration:</strong></p>
+                <ul>
+                    <li><strong>Node 1 (PVE1)</strong>: Primary compute node</li>
+                    <li><strong>Node 2 (PVE2)</strong>: Secondary compute node</li>
+                    <li><strong>Shared Storage</strong>: ZFS pool with RAID configuration</li>
+                    <li><strong>Network</strong>: 10GbE interconnect for high-speed data transfer</li>
+                </ul>
+
+                <h3>💾 Storage Solutions</h3>
+
+                <h4>Synology NAS - DS918+</h4>
+                <p><strong>Professional network-attached storage</strong> optimized for home and small business use.</p>
+
+                <p><strong>🖥️ Hardware Specifications:</strong></p>
+                <ul>
+                    <li><strong>Model</strong>: DS918+ (4-bay NAS)</li>
+                    <li><strong>CPU</strong>: Intel Celeron J3455 quad-core</li>
+                    <li><strong>RAM</strong>: 4GB DDR3L (expandable to 8GB)</li>
+                    <li><strong>Network</strong>: 2x Gigabit Ethernet with Link Aggregation</li>
+                </ul>
+
+                <p><strong>💿 Storage Configuration:</strong></p>
+                <pre><code>Storage Pool: SHR (Synology Hybrid RAID)
+├── 4x 4TB NAS drives (WD Red/Seagate IronWolf)
+├── 2x 500GB NVMe SSD cache drives
+└── File System: Btrfs with data integrity</code></pre>
+
+                <p><strong>📁 Available Services:</strong></p>
+                <ul>
+                    <li><strong>Docker Containers</strong>: Containerized applications</li>
+                    <li><strong>File Sharing</strong>: SMB/NFS protocols for cross-platform access</li>
+                    <li><strong>Time Machine Backups</strong>: macOS backup integration</li>
+                    <li><strong>Surveillance Station</strong>: IP camera management</li>
+                    <li><strong>Cloud Sync</strong>: Multi-cloud synchronization</li>
+                    <li><strong>Photo Station</strong>: Photo management and sharing</li>
+                </ul>
+
+                <h3>🌐 Network Infrastructure</h3>
+
+                <h4>Enterprise Network Setup</h4>
+                <p><strong>Professional networking infrastructure</strong> with VLAN segmentation and advanced features.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Device</th>
+                            <th>Model</th>
+                            <th>Type</th>
+                            <th>Features</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Router</strong></td>
+                            <td>TP-Link Archer AX20</td>
+                            <td>Wi-Fi 6 Router</td>
+                            <td>Dual-band Wi-Fi 6, MU-MIMO, Advanced QoS</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Switch</strong></td>
+                            <td>Netgear GS108Ev4</td>
+                            <td>Managed Switch</td>
+                            <td>VLAN support, QoS, Link aggregation</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>🌍 Network Segmentation</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>VLAN</th>
+                            <th>Purpose</th>
+                            <th>Subnet</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>VLAN 10</strong></td>
+                            <td>Management</td>
+                            <td>10.0.10.0/24</td>
+                            <td>Network administration and monitoring</td>
+                        </tr>
+                        <tr>
+                            <td><strong>VLAN 20</strong></td>
+                            <td>IoT Devices</td>
+                            <td>10.0.20.0/24</td>
+                            <td>Smart home devices and sensors</td>
+                        </tr>
+                        <tr>
+                            <td><strong>VLAN 30</strong></td>
+                            <td>Guest Network</td>
+                            <td>10.0.30.0/24</td>
+                            <td>Visitor access with internet-only</td>
+                        </tr>
+                        <tr>
+                            <td><strong>VLAN 40</strong></td>
+                            <td>Storage Network</td>
+                            <td>10.0.40.0/24</td>
+                            <td>High-speed storage traffic</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>📦 Repository Information</h2>
+                
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin: 2rem 0;">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--text-primary);">🔗 GitHub Repository</h3>
+                    <p style="margin-bottom: 1rem;"><strong>Repository:</strong> <a href="https://github.com/ahmed86-star/Homelab" target="_blank" style="color: var(--primary-color); text-decoration: none;">ahmed86-star/Homelab</a></p>
+                    <p style="margin-bottom: 1rem;"><strong>License:</strong> MIT License</p>
+                    <p style="margin-bottom: 1rem;"><strong>Languages:</strong> TypeScript (90.7%), Shell (7.2%), CSS (1.2%), JavaScript (0.9%)</p>
+                    <p style="margin-bottom: 1.5rem;"><strong>Website:</strong> <a href="https://www.ahmed1.live/" target="_blank" style="color: var(--primary-color); text-decoration: none;">ahmed1.live</a></p>
+                    
+                    <h4 style="margin: 1.5rem 0 1rem; color: var(--text-primary);">📁 Repository Structure</h4>
+                    <pre style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 8px; overflow-x: auto;"><code>Homelab/
+├── 📂 .github/workflows/      # CI/CD automation
+├── 📂 Scripts/                # Setup & hardening scripts
+├── 📂 diagrams/               # Infrastructure diagrams
+├── 📂 docs/                   # Documentation
+├── 📂 homelab-website/        # Next.js website
+├── 📄 README.md               # Main documentation
+└── 📄 LICENSE                 # MIT License</code></pre>
+                    
+                    <div style="margin-top: 2rem; text-align: center;">
+                        <a href="https://github.com/ahmed86-star/Homelab" target="_blank" style="display: inline-block; padding: 1rem 2.5rem; background: var(--primary-color); color: var(--bg-primary); text-decoration: none; border-radius: 8px; font-weight: 700; transition: all 0.3s ease; box-shadow: var(--glow-primary);">
+                            ⭐ Star on GitHub
+                        </a>
+                        <a href="https://github.com/ahmed86-star/Homelab/fork" target="_blank" style="display: inline-block; padding: 1rem 2.5rem; background: transparent; border: 2px solid var(--primary-color); color: var(--primary-color); text-decoration: none; border-radius: 8px; font-weight: 700; transition: all 0.3s ease; margin-left: 1rem;">
+                            🔱 Fork Repository
+                        </a>
+                    </div>
+                </div>
+
+                <h2>🔗 Services & Applications</h2>
+
+                <h3>🌐 Web Services & Documentation</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Hugo Documentation</strong></td>
+                            <td>Hugo-based documentation site</td>
+                            <td>🟢 Active</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Next.js Website</strong></td>
+                            <td>Next.js modern website</td>
+                            <td>🟢 Active</td>
+                        </tr>
+                        <tr>
+                            <td><strong>CasaOS</strong></td>
+                            <td>Home cloud OS & file manager</td>
+                            <td>🟢 Active</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>📊 Monitoring & Analytics</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Grafana</strong></td>
+                            <td>Metrics visualization & dashboards</td>
+                            <td>🟢 Active</td>
+                        </tr>
+                        <tr>
+                            <td><strong>InfluxDB</strong></td>
+                            <td>Time-series database</td>
+                            <td>🟢 Active</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tianji</strong></td>
+                            <td>System monitoring dashboard</td>
+                            <td>🟢 Active</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>🔒 Security & DNS</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>AdGuard Home</strong></td>
+                            <td>DNS ad-blocker & network protection</td>
+                            <td>🟢 Active</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pi-hole</strong></td>
+                            <td>DNS sinkhole & ad blocking</td>
+                            <td>🟢 Active</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cloudflared</strong></td>
+                            <td>Secure tunnel service</td>
+                            <td>🟢 Active</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>🚀 Featured Projects</h2>
+
+                <h3>🔒 Security Infrastructure</h3>
+                <p><strong>Enterprise-grade security implementation</strong> with comprehensive protection layers.</p>
+
+                <h4>🛡️ Authentication & Authorization</h4>
+                <ul>
+                    <li><strong>Single Sign-On (SSO)</strong>: Centralized authentication system</li>
+                    <li><strong>LDAP Integration</strong>: Directory services integration</li>
+                    <li><strong>OAuth2 Proxy</strong>: Secure API authentication</li>
+                </ul>
+
+                <h4>🌐 Network Security</h4>
+                <ul>
+                    <li><strong>Intrusion Detection (IDS/IPS)</strong>: Network threat monitoring</li>
+                    <li><strong>VPN Server</strong>: Secure remote access</li>
+                    <li><strong>DNS Filtering</strong>: Ad-blocking and content filtering</li>
+                </ul>
+
+                <h4>🔧 Hardening Scripts & Automation</h4>
+                <pre><code># System Hardening Scripts
+├── 🔒 firewall-setup.sh          # Firewall configuration
+├── 🔐 ssl-certificates.sh        # SSL/TLS certificate management
+├── 🛡️ security-audit.sh          # Security vulnerability scanning
+├── 🔑 ssh-hardening.sh           # SSH security configuration
+├── 🚪 access-control.sh          # User access management
+└── 📊 monitoring-setup.sh        # Security monitoring deployment</code></pre>
+
+                <h2>⚡ Performance Metrics</h2>
+                <p><strong>Real-time performance monitoring</strong> and system health indicators.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Service Category</th>
+                            <th>Response Time</th>
+                            <th>Uptime</th>
+                            <th>Load</th>
+                            <th>Security Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Documentation</strong></td>
+                            <td>200ms</td>
+                            <td>99.9%</td>
+                            <td>Low</td>
+                            <td>A+</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Proxmox Cluster</strong></td>
+                            <td>150ms</td>
+                            <td>99.99%</td>
+                            <td>Medium</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Storage Systems</strong></td>
+                            <td>5ms</td>
+                            <td>99.999%</td>
+                            <td>High</td>
+                            <td>A+</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Security Services</strong></td>
+                            <td>50ms</td>
+                            <td>99.95%</td>
+                            <td>Low</td>
+                            <td>A+</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr>
+
+                <div style="background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-primary) 100%); border: 2px solid var(--primary-color); border-radius: 12px; padding: 3rem; margin: 3rem 0; text-align: center;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1.5rem; font-size: 2rem;">🔗 Connect & Explore</h3>
+                    
+                    <div style="margin: 2rem 0;">
+                        <a href="https://github.com/ahmed86-star/Homelab" target="_blank" style="display: inline-block; margin: 0.5rem;">
+                            <img src="https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Repository">
+                        </a>
+                        <a href="https://github.com/ahmed86-star" target="_blank" style="display: inline-block; margin: 0.5rem;">
+                            <img src="https://img.shields.io/badge/GitHub-Profile-black?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Profile">
+                        </a>
+                        <a href="https://ahmed1.live" target="_blank" style="display: inline-block; margin: 0.5rem;">
+                            <img src="https://img.shields.io/badge/Website-ahmed1.live-blue?style=for-the-badge&logo=hugo&logoColor=white" alt="Homepage">
+                        </a>
+                    </div>
+                    
+                    <p style="color: var(--text-secondary); margin-top: 2rem; font-size: 1.1rem;">
+                        <strong>⭐ Star the repository</strong> | <strong>🔱 Fork and customize</strong> | <strong>🤝 Contribute improvements</strong>
+                    </p>
+                </div>
+
+                <p style="text-align: center;"><strong>✨ Built with passion and precision for the homelab community! 🚀</strong></p>
+                
+                <a href="index.html" class="back-button">← Back to Blog</a>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="imprint.html">Imprint</a>
+            </div>
+            <div class="footer-copyright">
+                <p>Copyright © Ahmed 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
