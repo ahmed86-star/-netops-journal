@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects | NetOps Journal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/netops.jpg" alt="NetOps Journal Logo" class="nav-logo-img">
+                <div class="nav-logo-text">
+                    <a href="index.html">NetOps Journal</a>
+                    <span class="nav-logo-tagline">Where networking meets automation.</span>
+                </div>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link">Categories</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="index.html#all">All</a></li>
+                        <li><a href="index.html#automation">Automation</a></li>
+                        <li><a href="index.html#opensource">Open-source</a></li>
+                        <li><a href="index.html#cisco">Cisco Technologies</a></li>
+                        <li><a href="index.html#juniper">Juniper Technologies</a></li>
+                        <li><a href="index.html#homeautomation">Home-Automation</a></li>
+                        <li><a href="index.html#homelab">Home-Lab</a></li>
+                        <li><a href="projects.html">Projects</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="index.html" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="projects.html" class="nav-link active">Projects</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="about.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Theme Toggle Button -->
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+        <span class="theme-toggle-icon">🎨</span>
+        <span class="theme-toggle-text">Change Theme</span>
+    </button>
+
+    <!-- Projects Hero Section -->
+    <section class="hero" style="padding: 80px 0 60px;">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">🚀 Projects</h1>
+                <p class="hero-subtitle">Building & Sharing</p>
+                <p class="hero-description">Explore my latest work in automation and web applications</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+        <div class="container">
+            <!-- Project Card -->
+            <article class="blog-card" style="max-width: 800px; margin: 0 auto;">
+                <div class="blog-category">Web Application</div>
+                <h3 class="blog-title">🚀 Droppy - Local File Sharing</h3>
+                <p class="blog-excerpt">
+                    Modern real-time file sharing application with drag-and-drop uploads, QR code generation, image format conversion, and device discovery. Built with React, TypeScript, Express, and PostgreSQL.
+                </p>
+                
+                <div style="margin: 20px 0;">
+                    <h4 style="color: var(--accent-color); margin-bottom: 10px;">Key Features:</h4>
+                    <ul style="color: var(--text-secondary); line-height: 1.8;">
+                        <li>📁 File sharing with drag & drop (up to 100MB)</li>
+                        <li>🖼️ Image converter (PNG, JPEG, WebP) - 100% private</li>
+                        <li>🔗 QR code generator & scanner</li>
+                        <li>📲 Real-time device discovery with WebSocket</li>
+                        <li>🌓 Dark mode & responsive design</li>
+                    </ul>
+                </div>
+
+                <div style="margin: 20px 0;">
+                    <h4 style="color: var(--accent-color); margin-bottom: 10px;">Tech Stack:</h4>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">React 18</span>
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">TypeScript</span>
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">Tailwind CSS</span>
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">Express.js</span>
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">PostgreSQL</span>
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">WebSocket</span>
+                    </div>
+                </div>
+
+                <div class="blog-meta" style="margin-top: 20px;">
+                    <span class="blog-date">Active Project</span>
+                    <span class="blog-comments">Open Source</span>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
+                    <a href="https://droppyx.org/" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+                        🌐 Live Demo
+                    </a>
+                    <a href="https://github.com/ahmed86-star/PeerDroper" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+                        📁 View Source
+                    </a>
+                </div>
+            </article>
+
+            <!-- Uni Tracker Project -->
+            <article class="blog-card" style="max-width: 800px; margin: 40px auto 0;">
+                <div class="blog-category">Web Application</div>
+                <h3 class="blog-title">🎓 Uni Tracker - Student Productivity Companion</h3>
+                <p class="blog-excerpt">
+                    Comprehensive productivity app for university students with Pomodoro timers, Kanban task board, smart notes, subject tracking, and progress analytics. Features dark mode and an interactive guided tour.
+                </p>
+                
+                <div style="margin: 20px 0;">
+                    <h4 style="color: var(--accent-color); margin-bottom: 10px;">Key Features:</h4>
+                    <ul style="color: var(--text-secondary); line-height: 1.8;">
+                        <li>🎯 Smart focus timers (Pomodoro, Study, Countdown)</li>
+                        <li>📋 Kanban board with drag-and-drop task management</li>
+                        <li>📝 Quick notes with tagging and search</li>
+                        <li>📊 Progress analytics with daily stats & study streaks</li>
+                        <li>📚 Subject management with weekly targets</li>
+                        <li>✨ Motivational quotes & interactive guided tour</li>
+                    </ul>
+                </div>
+
+                <div style="margin: 20px 0;">
+                    <h4 style="color: var(--accent-color); margin-bottom: 10px;">Tech Stack:</h4>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">React 18</span>
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">TypeScript</span>
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">TailwindCSS</span>
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">Node.js</span>
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">PostgreSQL</span>
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">Framer Motion</span>
+                    </div>
+                </div>
+
+                <div class="blog-meta" style="margin-top: 20px;">
+                    <span class="blog-date">Active Project</span>
+                    <span class="blog-comments">Open Source</span>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
+                    <a href="https://uni-tracker-production.up.railway.app/" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+                        🌐 Live Demo
+                    </a>
+                    <a href="https://github.com/ahmed86-star/uni-tracker" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+                        📁 View Source
+                    </a>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="imprint.html">Imprint</a>
+            </div>
+            <div class="footer-copyright">
+                <p>Copyright © Ahmed 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
