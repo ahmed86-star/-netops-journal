@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CompTIA Security+ (SY0-701) Certification Journey | Ahmed</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        .blog-post {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        .blog-post h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            text-shadow: var(--glow-primary);
+            text-align: center;
+        }
+        .blog-post h2 {
+            font-size: 2rem;
+            margin: 3rem 0 1.5rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        .blog-post h3 {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+        .blog-post h4 {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--text-secondary);
+        }
+        .blog-post p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+        .blog-post strong {
+            color: var(--primary-color);
+        }
+        .blog-post ul, .blog-post ol {
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+            color: var(--text-secondary);
+        }
+        .blog-post li {
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+        .blog-post table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            overflow-x: auto;
+            display: block;
+        }
+        .blog-post th, .blog-post td {
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            text-align: left;
+        }
+        .blog-post th {
+            background: var(--bg-card);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        .blog-post td {
+            color: var(--text-secondary);
+        }
+        .blog-post img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 2rem auto;
+            display: block;
+            border: 1px solid var(--border-color);
+        }
+        .blog-post pre, .blog-post code {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            display: block;
+            margin: 1.5rem 0;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 2rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            border-color: var(--primary-color);
+            transform: translateX(-5px);
+        }
+        .credly-badge {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+        }
+        .credly-badge img {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        .key-takeaway {
+            background: var(--bg-card);
+            border-left: 4px solid var(--primary-color);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+        .key-takeaway blockquote {
+            margin: 0;
+            font-style: italic;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+        }
+        hr {
+            border: none;
+            border-top: 2px solid var(--border-color);
+            margin: 3rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/netops.jpg" alt="NetOps Journal Logo" class="nav-logo-img">
+                <div class="nav-logo-text">
+                    <a href="index.html">NetOps Journal</a>
+                    <span class="nav-logo-tagline">Where networking meets automation.</span>
+                </div>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link">Categories</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="index.html#all">All</a></li>
+                        <li><a href="index.html#automation">Automation</a></li>
+                        <li><a href="index.html#opensource">Open-source</a></li>
+                        <li><a href="index.html#cisco">Cisco Technologies</a></li>
+                        <li><a href="index.html#juniper">Juniper Technologies</a></li>
+                        <li><a href="index.html#homeautomation">Home-Automation</a></li>
+                        <li><a href="index.html#homelab">Home-Lab</a></li>
+                        <li><a href="index.html#certifications">Certifications</a></li>
+                        <li><a href="projects.html">Projects</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="index.html" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="projects.html" class="nav-link">Projects</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="about.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <span class="theme-toggle-icon">🎨</span>
+        <span class="theme-toggle-text">Change Theme</span>
+    </button>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <article class="blog-post">
+                <a href="index.html" class="back-button">← Back to Blog</a>
+                
+                <h1>🎓 My CompTIA Security+ (SY0-701) Certification Journey</h1>
+
+                <div class="credly-badge">
+                    <a href="https://www.credly.com/badges/6f72120b-5c82-4a62-bf2e-519781ad2b73/public_url" target="_blank">
+                        <img src="https://github.com/user-attachments/assets/db1216ca-2d3e-4a5a-86af-637248d73892" alt="CompTIA Security+ Certification Badge">
+                    </a>
+                    <p style="margin-top: 1rem;">
+                        <a href="https://www.credly.com/badges/6f72120b-5c82-4a62-bf2e-519781ad2b73/public_url" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">
+                            🔗 View Certificate on Credly
+                        </a>
+                    </p>
+                </div>
+
+                <p>This document outlines the timeline, resources, and strategy I used to prepare for the CompTIA Security+ (SY0-701) exam. My path was unconventional, but it ultimately led to success.</p>
+
+                <hr>
+
+                <h2>🗓️ Key Dates & Milestones</h2>
+
+                <p>My journey for the Security+ began right after tackling another exam. Here is the timeline:</p>
+
+                <ul>
+                    <li><strong>September 30th, 2025:</strong> The point of no return. I purchased the <strong>Security+ (SY0-701)</strong> exam voucher.</li>
+                    <li><strong>October 10th, 2025:</strong> Things got real. I officially booked my exam date, which lit a fire under me to get serious about my weak areas.</li>
+                    <li><strong>October 16th, 2025:</strong> I sat for the previous exam. With that experience fresh in my mind, I was ready to focus entirely on the Security+.</li>
+                </ul>
+
+                <h2>📚 Study Resources & Strategy</h2>
+
+                <p>My study approach evolved over time. I started with passive learning and transitioned to active testing, which I found to be far more effective for me.</p>
+
+                <h3>Phase 1: The Exploratory Round</h3>
+
+                <p>I initially sampled several top-tier resources. While I didn't complete any of them from start to finish, I later realized that their unique perspectives gave me a well-rounded view of all five exam domains.</p>
+
+                <ul>
+                    <li><strong>Jason Dion's Udemy Course:</strong> I started here but moved on after completing about half of the course.</li>
+                    <li><strong>Professor Messer's YouTube Playlist:</strong> A fantastic resource, but I again pivoted to another resource halfway through.</li>
+                    <li><strong>Mike Chappell's Guide (from Amazon):</strong> I read a few chapters but felt the need to start actively testing my knowledge rather than just reading.</li>
+                </ul>
+
+                <h3>Phase 2: The Turning Point (Practice Exams)</h3>
+
+                <p>After booking my exam on October 08, my strategy shifted entirely to practice tests. This active recall method was the single most important part of my preparation.</p>
+
+                <p>My primary resources for practice questions were:</p>
+
+                <ol>
+                    <li><strong>CompTIA Security+ Study Guide with over 500 Practice Test Questions: Exam SY0-701 (Sybex Study Guide), 9th Edition</strong>
+                        <ul>
+                            <li><em>Authors: Mike Chapple, David Seidl</em></li>
+                        </ul>
+                    </li>
+                    <li><strong>CompTIA® Security+® SY0-701 Certification Guide: Master cybersecurity fundamentals and pass the SY0-701 exam on your first attempt, Third Edition</strong>
+                        <ul>
+                            <li><em>Author: Ian Neil</em></li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <img src="https://github.com/user-attachments/assets/4d5faffc-d373-414b-bcac-68a2c646ab80" alt="Study Materials Screenshot">
+
+                <p>These books were critical for identifying my weak spots and getting comfortable with the style of the exam questions.</p>
+
+                <h2>✨ My Key Takeaway</h2>
+
+                <div class="key-takeaway">
+                    <blockquote>
+                        The "perfect" study plan is the one that works for <strong>you</strong>. Don't be afraid to mix and match resources to keep yourself engaged. For me, the crucial shift was moving from passively consuming content to actively challenging myself with practice questions. That made all the difference.
+                    </blockquote>
+                </div>
+
+                <hr>
+
+                <div style="text-align: center; margin: 3rem 0;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1.5rem;">🎯 Ready to Start Your Own Journey?</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                        Remember: Everyone's path is different. Find what works for you, stay consistent, and don't give up!
+                    </p>
+                    <a href="https://www.comptia.org/certifications/security" target="_blank" style="display: inline-block; padding: 1rem 2rem; background: var(--primary-color); color: var(--bg-primary); text-decoration: none; border-radius: 8px; font-weight: 700; transition: all 0.3s ease; box-shadow: var(--glow-primary);">
+                        🔒 Learn More About Security+ Certification
+                    </a>
+                </div>
+
+                <p style="text-align: center;"><strong>✨ Good luck on your certification journey! 🚀</strong></p>
+                
+                <a href="index.html" class="back-button">← Back to Blog</a>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="imprint.html">Imprint</a>
+            </div>
+            <div class="footer-copyright">
+                <p>Copyright © Ahmed 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
