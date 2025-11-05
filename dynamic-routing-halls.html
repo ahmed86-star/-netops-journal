@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Halls: Dynamic Routing with RIP & OSPF | NetOps Journal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        .config-section {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .config-section:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--glow-primary);
+        }
+        
+        .script-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--bg-secondary);
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+        }
+        
+        .script-link:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--glow-primary);
+            transform: translateY(-2px);
+        }
+        
+        .topology-image {
+            width: 100%;
+            max-width: 900px;
+            margin: 2rem auto;
+            display: block;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .topology-image:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--glow-primary);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        th {
+            background-color: var(--bg-card);
+            color: var(--primary-color);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            color: var(--text-secondary);
+        }
+        
+        tr:hover {
+            background-color: var(--bg-card);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        code {
+            background-color: var(--bg-secondary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+        
+        pre {
+            background-color: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .highlight-box {
+            background-color: var(--bg-card);
+            border-left: 4px solid var(--primary-color);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            background-color: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: var(--glow-primary);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+        }
+        
+        .tech-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/netops.jpg" alt="NetOps Journal Logo" class="nav-logo-img">
+                <div class="nav-logo-text">
+                    <a href="index.html">NetOps Journal</a>
+                    <span class="nav-logo-tagline">Where networking meets automation.</span>
+                </div>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link">Categories</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="index.html#all">All</a></li>
+                        <li><a href="index.html#automation">Automation</a></li>
+                        <li><a href="index.html#opensource">Open-source</a></li>
+                        <li><a href="index.html#cisco">Cisco Technologies</a></li>
+                        <li><a href="index.html#juniper">Juniper Technologies</a></li>
+                        <li><a href="index.html#homeautomation">Home-Automation</a></li>
+                        <li><a href="index.html#homelab">Home-Lab</a></li>
+                        <li><a href="index.html#certifications">Certifications</a></li>
+                        <li><a href="projects.html">Projects</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="index.html" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="projects.html" class="nav-link">Projects</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="about.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Theme Toggle Button -->
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+        <span class="theme-toggle-icon">🎨</span>
+        <span class="theme-toggle-text">Change Theme</span>
+    </button>
+
+    <!-- Hero Section -->
+    <section class="hero" style="padding: 80px 0 60px;">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">🌐 Interactive Halls Network Design</h1>
+                <p class="hero-subtitle">Dynamic Routing Protocols: RIP vs OSPF Performance Analysis</p>
+                <p class="hero-description">Enterprise-grade network architecture for educational institutions featuring comparative analysis of routing protocols</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+        <div class="container" style="max-width: 1000px;">
+            
+            <!-- Project Overview -->
+            <section class="config-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">📋 Project Overview</h2>
+                <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1rem;">
+                    This project demonstrates the design and implementation of a comprehensive network infrastructure for a non-profit educational organization. The network supports three interactive learning halls equipped with essential computing resources including workstations, printers, and mobile devices across multiple geographically distributed branches.
+                </p>
+                <p style="color: var(--text-secondary); line-height: 1.8;">
+                    The primary objective is to compare the performance characteristics of two widely-deployed dynamic routing protocols: <strong style="color: var(--primary-color);">RIP (Routing Information Protocol)</strong> and <strong style="color: var(--primary-color);">OSPF (Open Shortest Path First)</strong> through practical network simulation and quantitative packet loss analysis.
+                </p>
+            </section>
+
+            <!-- Technology Stack -->
+            <section class="config-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">🛠️ Technologies & Tools</h2>
+                <div style="margin-top: 1rem;">
+                    <span class="tech-badge">Cisco Packet Tracer</span>
+                    <span class="tech-badge">RIP Protocol</span>
+                    <span class="tech-badge">OSPF Protocol</span>
+                    <span class="tech-badge">Network Simulation</span>
+                    <span class="tech-badge">Performance Analysis</span>
+                </div>
+            </section>
+
+            <!-- Network Statistics -->
+            <section class="config-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">📊 Network Infrastructure Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">12</span>
+                        <span class="stat-label">Cisco Routers</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">5</span>
+                        <span class="stat-label">Network Switches</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">20+</span>
+                        <span class="stat-label">End Devices</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">3</span>
+                        <span class="stat-label">Interactive Halls</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Methodology -->
+            <section class="config-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">🔬 Methodology</h2>
+                <ul style="color: var(--text-secondary); line-height: 2; list-style-position: inside;">
+                    <li>✓ Design and configure dual network topologies supporting multi-branch educational facilities with distributed interactive learning environments</li>
+                    <li>✓ Implement and simulate both RIP and OSPF routing protocols to analyze performance variations under identical network conditions</li>
+                    <li>✓ Conduct systematic packet transmission tests between network endpoints to quantify protocol efficiency</li>
+                    <li>✓ Calculate packet loss percentage using the formula: <code>(Packets Sent - Packets Received) / Packets Sent × 100</code></li>
+                </ul>
+            </section>
+
+            <!-- Network Topology -->
+            <section class="config-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">🗺️ Network Topology</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    The network architecture implements a hierarchical design with 12 interconnected routers forming the backbone infrastructure. Strategic placement of switches and end-user devices creates redundant paths and fault tolerance.
+                </p>
+                <img src="images/dynamic-routing.png" alt="Network Topology Diagram - Three Branch Design with RIP and OSPF" class="topology-image">
+            </section>
+
+            <!-- Addressing Table -->
+            <section class="config-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">📋 IP Addressing Scheme</h2>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Device</th>
+                                <th>Interface</th>
+                                <th>IP Address</th>
+                                <th>Subnet Mask</th>
+                                <th>Default Gateway</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>R1</strong></td>
+                                <td>S0/1/1 (DCE)</td>
+                                <td>14.0.0.1</td>
+                                <td>255.0.0.0</td>
+                                <td>N/A</td>
+                            </tr>
+                            <tr>
+                                <td><strong>R1</strong></td>
+                                <td>S0/0/1</td>
+                                <td>10.0.0.1</td>
+                                <td>255.0.0.0</td>
+                                <td>N/A</td>
+                            </tr>
+                            <tr>
+                                <td><strong>R1</strong></td>
+                                <td>S0/1/0</td>
+                                <td>11.0.0.1</td>
+                                <td>255.0.0.0</td>
+                                <td>N/A</td>
+                            </tr>
+                            <tr>
+                                <td><strong>R2</strong></td>
+                                <td>G0/0</td>
+                                <td>192.168.1.1</td>
+                                <td>255.255.255.0</td>
+                                <td>N/A</td>
+                            </tr>
+                            <tr>
+                                <td><strong>R2</strong></td>
+                                <td>S0/0/0 (DCE)</td>
+                                <td>13.0.0.2</td>
+                                <td>255.0.0.0</td>
+                                <td>N/A</td>
+                            </tr>
+                            <tr>
+                                <td><strong>R2</strong></td>
+                                <td>S0/0/1 (DCE)</td>
+                                <td>10.0.0.2</td>
+                                <td>255.0.0.0</td>
+                                <td>N/A</td>
+                            </tr>
+                            <tr>
+                                <td><strong>R3</strong></td>
+                                <td>S0/0/0</td>
+                                <td>13.0.0.1</td>
+                                <td>255.0.0.0</td>
+                                <td>N/A</td>
+                            </tr>
+                            <tr>
+                                <td><strong>R3</strong></td>
+                                <td>G0/0</td>
+                                <td>192.168.2.1</td>
+                                <td>255.255.255.0</td>
+                                <td>N/A</td>
+                            </tr>
+                            <tr>
+                                <td><strong>R3</strong></td>
+                                <td>S0/0/1</td>
+                                <td>12.0.0.2</td>
+                                <td>255.0.0.0</td>
+                                <td>N/A</td>
+                            </tr>
+                            <tr>
+                                <td><strong>R4</strong></td>
+                                <td>S0/1/0 (DCE)</td>
+                                <td>11.0.0.2</td>
+                                <td>255.0.0.0</td>
+                                <td>N/A</td>
+                            </tr>
+                            <tr>
+                                <td><strong>R4</strong></td>
+                                <td>S0/0/0 (DCE)</td>
+                                <td>12.0.0.1</td>
+                                <td>255.0.0.0</td>
+                                <td>N/A</td>
+                            </tr>
+                            <tr>
+                                <td><strong>R4</strong></td>
+                                <td>G0/0</td>
+                                <td>192.168.3.1</td>
+                                <td>255.255.255.0</td>
+                                <td>N/A</td>
+                            </tr>
+                            <tr>
+                                <td><strong>PC-A</strong></td>
+                                <td>Fa0</td>
+                                <td>192.168.1.2</td>
+                                <td>255.255.255.0</td>
+                                <td>192.168.1.1</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Laptop-A</strong></td>
+                                <td>Fa0</td>
+                                <td>192.168.1.3</td>
+                                <td>255.255.255.0</td>
+                                <td>192.168.1.1</td>
+                            </tr>
+                            <tr>
+                                <td><strong>PC-B</strong></td>
+                                <td>Fa0</td>
+                                <td>192.168.2.2</td>
+                                <td>255.255.255.0</td>
+                                <td>192.168.2.1</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-light); font-style: italic;">
+                                    Additional device addressing details available in full documentation
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Router Configuration -->
+            <section class="config-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">⚙️ Router Configuration Scripts</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    Download individual configuration scripts for each router and routing protocol. Each script is optimized for Cisco IOS and includes interface configuration, IP addressing, and protocol enablement.
+                </p>
+                
+                <h3 style="color: var(--text-primary); margin: 2rem 0 1rem;">Interface Configuration Scripts</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+                    <a href="scripts/r1-config.sh" download class="script-link">
+                        📄 Router R1 Configuration
+                    </a>
+                    <a href="scripts/r2-config.sh" download class="script-link">
+                        📄 Router R2 Configuration
+                    </a>
+                    <a href="scripts/r3-config.sh" download class="script-link">
+                        📄 Router R3 Configuration
+                    </a>
+                    <a href="scripts/r4-config.sh" download class="script-link">
+                        📄 Router R4 Configuration
+                    </a>
+                </div>
+
+                <h3 style="color: var(--text-primary); margin: 2rem 0 1rem;">Routing Protocol Configuration</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+                    <a href="scripts/rip-config.sh" download class="script-link">
+                        🔄 RIP Protocol Configuration
+                    </a>
+                    <a href="scripts/ospf-config.sh" download class="script-link">
+                        🔄 OSPF Protocol Configuration
+                    </a>
+                </div>
+
+                <div class="highlight-box" style="margin-top: 2rem;">
+                    <p style="color: var(--text-secondary); margin: 0; line-height: 1.8;">
+                        <strong style="color: var(--primary-color);">⚠️ Important:</strong> These configuration scripts should be applied systematically. First configure all router interfaces using the R1-R4 scripts, then deploy either RIP or OSPF routing protocol across all routers in the topology. Ensure DCE interfaces have clock rate configured for serial connections.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Sample Configuration -->
+            <section class="config-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">💻 Sample Configuration: Router R1</h2>
+                <pre><code>configure terminal
+
+# Configure Serial0/0/1
+interface Serial0/0/1
+ip address 10.0.0.1 255.0.0.0
+no shutdown
+exit
+
+# Configure Serial0/1/0
+interface Serial0/1/0
+ip address 11.0.0.1 255.0.0.0
+no shutdown
+exit
+
+# Configure Serial0/1/1 (DCE)
+interface Serial0/1/1
+ip address 14.0.0.1 255.0.0.0
+clock rate 64000
+no shutdown
+exit
+
+end
+write memory</code></pre>
+            </section>
+
+            <!-- RIP Configuration -->
+            <section class="config-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">🔄 RIP Protocol Configuration</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    The RIP (Routing Information Protocol) implementation uses distance-vector routing with hop count as the metric. This configuration must be applied to all 12 routers to establish full network convergence.
+                </p>
+                <pre><code>configure terminal
+
+router rip
+network 10.0.0.0
+network 11.0.0.0
+network 12.0.0.0
+network 13.0.0.0
+network 192.168.1.0
+network 192.168.2.0
+network 192.168.3.0
+# Additional networks...
+
+exit
+end
+write memory</code></pre>
+            </section>
+
+            <!-- OSPF Configuration -->
+            <section class="config-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">🔄 OSPF Protocol Configuration</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    The OSPF (Open Shortest Path First) implementation uses link-state routing with cost as the metric. All networks are configured within Area 0 (backbone area) for optimal performance in this topology.
+                </p>
+                <pre><code>configure terminal
+
+router ospf 1
+network 10.0.0.0 0.255.255.255 area 0
+network 11.0.0.0 0.255.255.255 area 0
+network 12.0.0.0 0.255.255.255 area 0
+network 13.0.0.0 0.255.255.255 area 0
+network 192.168.1.1 0.0.0.255 area 0
+network 192.168.2.1 0.0.0.255 area 0
+network 192.168.3.1 0.0.0.255 area 0
+# Additional networks...
+
+exit
+end
+write memory</code></pre>
+            </section>
+
+            <!-- Results: RIP -->
+            <section class="config-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">📊 Performance Analysis: RIP Protocol</h2>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Test #</th>
+                                <th>Source</th>
+                                <th>Destination</th>
+                                <th>Sent</th>
+                                <th>Received</th>
+                                <th>Packet Loss</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>PC-A</td>
+                                <td>PC-D</td>
+                                <td>4</td>
+                                <td>3</td>
+                                <td style="color: #ef4444;">25%</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Laptop-D</td>
+                                <td>PC-E</td>
+                                <td>4</td>
+                                <td>3</td>
+                                <td style="color: #ef4444;">25%</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>PC-A</td>
+                                <td>PC-B</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td style="color: #10b981;">0%</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>PC-C</td>
+                                <td>PC-L</td>
+                                <td>4</td>
+                                <td>3</td>
+                                <td style="color: #ef4444;">25%</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>PC-E</td>
+                                <td>PC-D</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td style="color: #10b981;">0%</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>PC-L</td>
+                                <td>PC-H</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td style="color: #10b981;">0%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="highlight-box">
+                    <p style="color: var(--text-secondary); margin: 0; line-height: 1.8;">
+                        <strong style="color: var(--primary-color);">RIP Performance Summary:</strong><br>
+                        Total packets transmitted: <strong style="color: var(--primary-color);">24</strong><br>
+                        Packets received: <strong style="color: var(--primary-color);">21</strong><br>
+                        Packets lost: <strong style="color: #ef4444;">3</strong><br>
+                        Average packet loss: <strong style="color: #ef4444;">12.5%</strong>
+                    </p>
+                </div>
+            </section>
+
+            <!-- Results: OSPF -->
+            <section class="config-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">📊 Performance Analysis: OSPF Protocol</h2>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Test #</th>
+                                <th>Source</th>
+                                <th>Destination</th>
+                                <th>Sent</th>
+                                <th>Received</th>
+                                <th>Packet Loss</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>PC-A</td>
+                                <td>Laptop-B</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td style="color: #10b981;">0%</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Laptop-C</td>
+                                <td>PC-D</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td style="color: #10b981;">0%</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>PC-L</td>
+                                <td>PC-K</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td style="color: #10b981;">0%</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>PC-H</td>
+                                <td>Laptop-C</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td style="color: #10b981;">0%</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>PC-K</td>
+                                <td>Laptop-C</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td style="color: #10b981;">0%</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>PC-L</td>
+                                <td>Laptop-E</td>
+                                <td>4</td>
+                                <td>3</td>
+                                <td style="color: #ef4444;">25%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="highlight-box">
+                    <p style="color: var(--text-secondary); margin: 0; line-height: 1.8;">
+                        <strong style="color: var(--primary-color);">OSPF Performance Summary:</strong><br>
+                        Total packets transmitted: <strong style="color: var(--primary-color);">24</strong><br>
+                        Packets received: <strong style="color: var(--primary-color);">23</strong><br>
+                        Packets lost: <strong style="color: #10b981;">1</strong><br>
+                        Average packet loss: <strong style="color: #10b981;">4.2%</strong>
+                    </p>
+                </div>
+            </section>
+
+            <!-- Conclusions -->
+            <section class="config-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">🎯 Key Findings & Conclusions</h2>
+                <div style="color: var(--text-secondary); line-height: 1.8;">
+                    <p style="margin-bottom: 1rem;">
+                        Through comprehensive testing and analysis, this project demonstrates significant performance differences between RIP and OSPF routing protocols in a multi-branch educational network environment:
+                    </p>
+                    <ul style="list-style-position: inside; margin-bottom: 1rem;">
+                        <li><strong style="color: var(--primary-color);">OSPF demonstrated superior performance</strong> with a packet loss rate of 4.2% compared to RIP's 12.5%</li>
+                        <li><strong style="color: var(--primary-color);">Network convergence</strong> was notably faster with OSPF's link-state algorithm</li>
+                        <li><strong style="color: var(--primary-color);">OSPF's scalability advantages</strong> become evident in complex topologies with multiple redundant paths</li>
+                        <li><strong style="color: var(--primary-color);">RIP's simplicity</strong> may still be suitable for smaller network segments with limited hop counts</li>
+                    </ul>
+                    <p style="margin-bottom: 1rem;">
+                        The results validate OSPF as the recommended routing protocol for enterprise and educational networks requiring high availability, fast convergence, and efficient path selection. However, RIP remains a viable option for smaller deployments where administrative simplicity is prioritized over performance optimization.
+                    </p>
+                    <div class="highlight-box" style="margin-top: 1.5rem;">
+                        <p style="margin: 0;">
+                            <strong style="color: var(--primary-color);">💡 Recommendation:</strong> For production deployments in educational institutions with multiple branches, OSPF is the optimal choice due to its superior packet delivery rates and faster convergence characteristics.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Project Info -->
+            <section class="config-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">📌 Project Information</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                    <div>
+                        <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.25rem;">Category</p>
+                        <p style="color: var(--text-primary); font-weight: 600;">Cisco Technologies</p>
+                    </div>
+                    <div>
+                        <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.25rem;">Complexity</p>
+                        <p style="color: var(--text-primary); font-weight: 600;">Advanced</p>
+                    </div>
+                    <div>
+                        <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.25rem;">Simulation Tool</p>
+                        <p style="color: var(--text-primary); font-weight: 600;">Cisco Packet Tracer</p>
+                    </div>
+                    <div>
+                        <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.25rem;">Network Scale</p>
+                        <p style="color: var(--text-primary); font-weight: 600;">Enterprise</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="imprint.html">Imprint</a>
+            </div>
+            <div class="footer-copyright">
+                <p>Copyright © Ahmed 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
