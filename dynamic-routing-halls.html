@@ -706,6 +706,34 @@ write memory</code></pre>
                 </div>
             </section>
 
+            <!-- CPU Utilization Analysis -->
+            <section class="config-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">💻 CPU Utilization Comparison</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    CPU utilization analysis reveals significant efficiency differences between the two routing protocols. In the RIP protocol, CPU utilization reached approximately <strong style="color: #ef4444;">79%</strong>, while the OSPF protocol demonstrated considerably lower resource consumption at <strong style="color: #10b981;">42%</strong>.
+                </p>
+                <img src="images/cpu.png" alt="CPU Utilization Comparison - RIP vs OSPF" class="topology-image" style="max-width: 700px;">
+                <div class="highlight-box" style="margin-top: 1.5rem;">
+                    <p style="color: var(--text-secondary); margin: 0; line-height: 1.8;">
+                        <strong style="color: var(--primary-color);">Key Insight:</strong> OSPF's superior CPU efficiency (42% vs 79%) demonstrates its optimized algorithm design, making it more suitable for production environments where resource conservation is critical. The 37% reduction in CPU utilization allows for better scalability and concurrent service support.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Memory Usage Analysis -->
+            <section class="config-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">🧠 Memory Usage Comparison</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    Memory consumption analysis shows both protocols maintain high memory utilization for routing table maintenance. In the RIP protocol, memory usage was measured at <strong style="color: #ef4444;">88%</strong>. The OSPF protocol showed slightly improved performance with memory usage at <strong style="color: #f59e0b;">83%</strong>.
+                </p>
+                <img src="images/memory.png" alt="Memory Usage Comparison - RIP vs OSPF" class="topology-image" style="max-width: 700px;">
+                <div class="highlight-box" style="margin-top: 1.5rem;">
+                    <p style="color: var(--text-secondary); margin: 0; line-height: 1.8;">
+                        <strong style="color: var(--primary-color);">Analysis:</strong> While both protocols require substantial memory resources for routing information storage, OSPF's 5% improvement (83% vs 88%) demonstrates better memory management. OSPF's link-state database, though more complex, utilizes memory more efficiently than RIP's distance-vector approach.
+                    </p>
+                </div>
+            </section>
+
             <!-- Conclusions -->
             <section class="config-section">
                 <h2 style="color: var(--primary-color); margin-bottom: 1rem;">🎯 Key Findings & Conclusions</h2>
@@ -715,6 +743,8 @@ write memory</code></pre>
                     </p>
                     <ul style="list-style-position: inside; margin-bottom: 1rem;">
                         <li><strong style="color: var(--primary-color);">OSPF demonstrated superior performance</strong> with a packet loss rate of 4.2% compared to RIP's 12.5%</li>
+                        <li><strong style="color: var(--primary-color);">CPU efficiency</strong> was significantly better with OSPF (42% utilization) versus RIP (79% utilization), representing a 37% reduction in CPU consumption</li>
+                        <li><strong style="color: var(--primary-color);">Memory optimization</strong> showed OSPF using 83% memory compared to RIP's 88%, demonstrating more efficient resource management</li>
                         <li><strong style="color: var(--primary-color);">Network convergence</strong> was notably faster with OSPF's link-state algorithm</li>
                         <li><strong style="color: var(--primary-color);">OSPF's scalability advantages</strong> become evident in complex topologies with multiple redundant paths</li>
                         <li><strong style="color: var(--primary-color);">RIP's simplicity</strong> may still be suitable for smaller network segments with limited hop counts</li>
@@ -724,7 +754,7 @@ write memory</code></pre>
                     </p>
                     <div class="highlight-box" style="margin-top: 1.5rem;">
                         <p style="margin: 0;">
-                            <strong style="color: var(--primary-color);">💡 Recommendation:</strong> For production deployments in educational institutions with multiple branches, OSPF is the optimal choice due to its superior packet delivery rates and faster convergence characteristics.
+                            <strong style="color: var(--primary-color);">💡 Recommendation:</strong> For production deployments in educational institutions with multiple branches, OSPF is the optimal choice due to its superior packet delivery rates (4.2% vs 12.5% loss), significantly lower CPU utilization (42% vs 79%), better memory efficiency (83% vs 88%), and faster convergence characteristics.
                         </p>
                     </div>
                 </div>
