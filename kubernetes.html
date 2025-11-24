@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building a Production-Ready K3s Homelab | Ahmed</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        .blog-post {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        .blog-post h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            text-shadow: var(--glow-primary);
+            text-align: center;
+        }
+        .blog-post h2 {
+            font-size: 2rem;
+            margin: 3rem 0 1.5rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        .blog-post h3 {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+        .blog-post h4 {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--text-secondary);
+        }
+        .blog-post p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+        .blog-post strong {
+            color: var(--primary-color);
+        }
+        .blog-post ul, .blog-post ol {
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+            color: var(--text-secondary);
+        }
+        .blog-post li {
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+        .blog-post table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            overflow-x: auto;
+            display: block;
+        }
+        .blog-post th, .blog-post td {
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            text-align: left;
+        }
+        .blog-post th {
+            background: var(--bg-card);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        .blog-post td {
+            color: var(--text-secondary);
+        }
+        .blog-post img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 2rem auto;
+            display: block;
+            border: 1px solid var(--border-color);
+        }
+        .blog-post pre {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            display: block;
+            margin: 1.5rem 0;
+        }
+        .blog-post code {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 0.2rem 0.4rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+        }
+        .blog-post pre code {
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 2rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            border-color: var(--primary-color);
+            transform: translateX(-5px);
+        }
+        .info-box {
+            background: var(--bg-card);
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        .ascii-diagram {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: var(--text-secondary);
+        }
+        hr {
+            border: none;
+            border-top: 2px solid var(--border-color);
+            margin: 3rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/netops.jpg" alt="NetOps Journal Logo" class="nav-logo-img">
+                <div class="nav-logo-text">
+                    <a href="index.html">NetOps Journal</a>
+                    <span class="nav-logo-tagline">Where networking meets automation.</span>
+                </div>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link">Categories</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="index.html#all">All</a></li>
+                        <li><a href="index.html#automation">Automation</a></li>
+                        <li><a href="index.html#opensource">Open-source</a></li>
+                        <li><a href="index.html#cisco">Cisco Technologies</a></li>
+                        <li><a href="index.html#juniper">Juniper Technologies</a></li>
+                        <li><a href="index.html#homeautomation">Home-Automation</a></li>
+                        <li><a href="index.html#homelab">Home-Lab</a></li>
+                        <li><a href="index.html#certifications">Certifications</a></li>
+                        <li><a href="projects.html">Projects</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="index.html" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="projects.html" class="nav-link">Projects</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="about.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <span class="theme-toggle-icon">🎨</span>
+        <span class="theme-toggle-text">Change Theme</span>
+    </button>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <article class="blog-post">
+                <a href="index.html" class="back-button">← Back to Blog</a>
+                
+                <h1>🚀 Building a Production-Ready K3s Homelab with Proxmox and Terraform</h1>
+
+                <div style="text-align: center; margin: 2rem 0;">
+                    <img src="images/kube display image.png" alt="Kubernetes Homelab" style="max-width: 100%; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);">
+                </div>
+
+                <p>Running Kubernetes at home doesn't have to be complex or expensive. In this guide, I'll walk you through my 3-node K3s cluster built on Proxmox VE, automated with Terraform, and running on Ubuntu Server 22.04.</p>
+
+                <p>Whether you're learning Kubernetes, testing applications, or building a home lab for development, this setup provides a solid foundation that mimics production environments without breaking the bank.</p>
+
+                <h2>🎯 What We're Building</h2>
+
+                <p>A lightweight, highly available Kubernetes cluster featuring:</p>
+
+                <ul>
+                    <li><strong>3 Proxmox nodes</strong> running virtualized infrastructure</li>
+                    <li><strong>Automated VM deployment</strong> using Terraform</li>
+                    <li><strong>K3s Kubernetes distribution</strong> for minimal resource usage</li>
+                    <li><strong>1 master + 2 worker nodes</strong> for true cluster behavior</li>
+                    <li><strong>All managed from a single laptop</strong> running Pop!_OS</li>
+                </ul>
+
+                <h2>🏗️ Architecture Overview</h2>
+
+                <h3>Physical Hardware</h3>
+
+                <p>My setup consists of relatively modest hardware that you might already have lying around:</p>
+
+                <ul>
+                    <li><strong>3 × Proxmox VE nodes</strong> (repurposed desktop hardware or mini PCs work great)</li>
+                    <li><strong>1 × Lenovo laptop</strong> running Pop!_OS (my admin machine for SSH, Terraform, and kubectl)</li>
+                    <li><strong>1 × Netgear GS108E switch</strong> (any managed or unmanaged gigabit switch works)</li>
+                </ul>
+
+                <p>The beauty of this setup is its scalability. Start with what you have and expand as needed.</p>
+
+                <h3>Admin Workstation</h3>
+
+                <div class="info-box" style="text-align: center;">
+                    <img src="images/lenovo pop os.png" alt="Lenovo Laptop with Pop!_OS" style="max-width: 100%; border-radius: 8px;">
+                    <p style="margin-top: 1rem; color: var(--text-secondary); font-style: italic;">
+                        <strong>Lenovo Admin Workstation</strong> - Running Pop!_OS as the main configuration and management machine with SSH, Terraform, VSCode, and kubectl
+                    </p>
+                </div>
+
+                <h3>Physical Setup</h3>
+
+                <div class="info-box" style="text-align: center;">
+                    <img src="images/rack.png" alt="DeskPi RackMate T1-Plus Rackmount Setup" style="max-width: 100%; border-radius: 8px;">
+                    <p style="margin-top: 1rem; color: var(--text-secondary); font-style: italic;">
+                        <strong>DeskPi RackMate T1-Plus Rackmount</strong> - 10-inch 8U Server Cabinet for Network, Servers, Audio and Video Equipment
+                    </p>
+                </div>
+
+                <div class="info-box" style="text-align: center;">
+                    <img src="images/image (3).jpeg" alt="CAT6A Patch Cables" style="max-width: 100%; border-radius: 8px;">
+                    <p style="margin-top: 1rem; color: var(--text-secondary); font-style: italic;">
+                        <strong>CAT6A Patch Cables</strong> - High-performance Ethernet cables providing reliable gigabit connectivity between network devices
+                    </p>
+                </div>
+
+                <h3>Network Architecture</h3>
+
+                <p>I'm using a simple flat network design with static IP assignments. For this blog post, I've masked the actual IPs to a documentation-friendly range:</p>
+
+                <p><strong>Internal subnet:</strong> <code>10.10.10.0/24</code></p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hostname</th>
+                            <th>Role</th>
+                            <th>IP Address</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>cluster</td>
+                            <td>K3s master</td>
+                            <td>10.10.10.11</td>
+                            <td>Control plane node</td>
+                        </tr>
+                        <tr>
+                            <td>worker1</td>
+                            <td>K3s agent</td>
+                            <td>10.10.10.12</td>
+                            <td>Worker node</td>
+                        </tr>
+                        <tr>
+                            <td>worker3</td>
+                            <td>K3s agent</td>
+                            <td>10.10.10.13</td>
+                            <td>Worker node</td>
+                        </tr>
+                        <tr>
+                            <td>lenovo</td>
+                            <td>Admin machine</td>
+                            <td>10.10.10.20</td>
+                            <td>Management workstation</td>
+                        </tr>
+                        <tr>
+                            <td>netgear</td>
+                            <td>Switch</td>
+                            <td>10.10.10.1</td>
+                            <td>Network gateway</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Switch Port Mapping</h3>
+
+                <p>Here's how everything connects to my Netgear GS108E:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Port</th>
+                            <th>Device</th>
+                            <th>Hostname</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Proxmox Node 1</td>
+                            <td>cluster</td>
+                            <td>K3s master node</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Proxmox Node 2</td>
+                            <td>worker1</td>
+                            <td>K3s worker</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Proxmox Node 3</td>
+                            <td>worker3</td>
+                            <td>K3s worker</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Lenovo Pop!_OS</td>
+                            <td>lenovo</td>
+                            <td>Admin workstation</td>
+                        </tr>
+                        <tr>
+                            <td>5-8</td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>Available for expansion</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>📋 Prerequisites</h2>
+
+                <p>Before diving in, ensure you have:</p>
+
+                <ol>
+                    <li><strong>Three machines with Proxmox VE installed</strong> (version 7.x or 8.x)</li>
+                    <li><strong>A management machine</strong> with SSH, Terraform, and kubectl installed</li>
+                    <li><strong>Basic networking</strong> configured on all Proxmox nodes</li>
+                    <li><strong>An Ubuntu 22.04 cloud image</strong> or VM template in Proxmox</li>
+                    <li><strong>SSH key pair</strong> for passwordless authentication</li>
+                </ol>
+
+                <h2>🔧 Part 1: Proxmox VM Configuration</h2>
+
+                <p>Each Kubernetes node runs as a VM on Proxmox with these specifications:</p>
+
+                <h3>Ubuntu VM Template Specs</h3>
+
+                <pre><code>CPU: 2 cores (can scale up based on workload)
+RAM: 4-8 GB (4GB minimum for K3s)
+Disk: 20-40 GB (thin provisioned)
+Boot: UEFI (required for modern Ubuntu)
+Network: Bridged (vmbr0)</code></pre>
+
+                <p><strong>Why these specs?</strong> K3s is incredibly lightweight compared to full Kubernetes. The master node comfortably runs on 2 cores and 4GB RAM, while workers can start even smaller and scale as needed.</p>
+
+                <h3>Creating the Ubuntu Template</h3>
+
+                <p>If you haven't already, create a VM template in Proxmox:</p>
+
+                <ol>
+                    <li>Download Ubuntu 22.04 cloud image</li>
+                    <li>Create a VM in Proxmox</li>
+                    <li>Configure cloud-init settings</li>
+                    <li>Convert to template</li>
+                </ol>
+
+                <p>This template becomes the foundation for Terraform automation.</p>
+
+                <h2>🛠️ Part 2: Terraform Automation</h2>
+
+                <p>Infrastructure as Code makes this setup reproducible and version-controlled. Here's my Terraform structure:</p>
+
+                <pre><code>terraform/
+├── main.tf                 # Provider and main configuration
+├── variables.tf            # Variable definitions
+├── proxmox-master.tf       # Master node definition
+├── proxmox-worker1.tf      # Worker 1 definition
+├── proxmox-worker3.tf      # Worker 3 definition
+└── cloud-init/             # Cloud-init configurations
+    ├── master.yaml
+    ├── worker1.yaml
+    └── worker3.yaml</code></pre>
+
+                <div class="info-box" style="text-align: center;">
+                    <img src="images/vscode.png" alt="VSCode on Pop!_OS for Infrastructure Management" style="max-width: 100%; border-radius: 8px;">
+                    <p style="margin-top: 1rem; color: var(--text-secondary); font-style: italic;">
+                        <strong>Development Environment</strong> - Managing K3s infrastructure as code using VSCode on Pop!_OS with Terraform configuration files
+                    </p>
+                </div>
+
+                <h3>Key Terraform Variables</h3>
+
+                <pre><code># variables.tf
+variable "master_ip" {
+  default = "10.10.10.11"
+}
+
+variable "worker1_ip" {
+  default = "10.10.10.12"
+}
+
+variable "worker3_ip" {
+  default = "10.10.10.13"
+}
+
+variable "gateway" {
+  default = "10.10.10.1"
+}
+
+variable "vm_cpu_cores" {
+  default = 2
+}
+
+variable "vm_memory" {
+  default = 4096
+}</code></pre>
+
+                <h3>What Terraform Does</h3>
+
+                <p>For each node, Terraform:</p>
+
+                <ol>
+                    <li><strong>Clones the Ubuntu template</strong> from Proxmox</li>
+                    <li><strong>Injects cloud-init configuration</strong> with hostname and network settings</li>
+                    <li><strong>Assigns a static IP address</strong> from our planned network</li>
+                    <li><strong>Boots the VM</strong> ready for K3s installation</li>
+                </ol>
+
+                <p>The beauty here is consistency. All three nodes are configured identically (except for IPs and hostnames), eliminating configuration drift.</p>
+
+                <h3>Deploying with Terraform</h3>
+
+                <pre><code># Initialize Terraform
+terraform init
+
+# Preview changes
+terraform plan
+
+# Deploy all VMs
+terraform apply -auto-approve</code></pre>
+
+                <p>Within minutes, you'll have three fresh Ubuntu VMs ready for Kubernetes.</p>
+
+                <h2>🐋 Part 3: Installing K3s</h2>
+
+                <p>K3s is a lightweight Kubernetes distribution perfect for edge computing, IoT, CI/CD, and homelabs. It's a single binary under 100MB that includes everything you need.</p>
+
+                <h3>Step 1: Install K3s on Master Node</h3>
+
+                <p>SSH into the master node from your admin machine:</p>
+
+                <pre><code>ssh ubuntu@10.10.10.11</code></pre>
+
+                <p>Install K3s server (master):</p>
+
+                <pre><code>curl -sfL https://get.k3s.io | sh -</code></pre>
+
+                <p>This single command:</p>
+
+                <ul>
+                    <li>Downloads and installs K3s</li>
+                    <li>Sets up systemd services</li>
+                    <li>Configures the control plane</li>
+                    <li>Starts the Kubernetes API server</li>
+                </ul>
+
+                <p>Verify installation:</p>
+
+                <pre><code>sudo systemctl status k3s
+sudo kubectl get nodes</code></pre>
+
+                <h3>Step 2: Retrieve the Node Token</h3>
+
+                <p>Worker nodes need a token to join the cluster securely. Retrieve it with:</p>
+
+                <pre><code>sudo cat /var/lib/rancher/k3s/server/node-token</code></pre>
+
+                <p>Copy this token—you'll need it for the worker nodes. It looks something like:</p>
+
+                <pre><code>K107c4e1b2a8f3d9e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3::server:a1b2c3d4e5f6</code></pre>
+
+                <h3>Step 3: Join Worker Nodes</h3>
+
+                <p>SSH into worker1:</p>
+
+                <pre><code>ssh ubuntu@10.10.10.12</code></pre>
+
+                <p>Install K3s agent and join the cluster:</p>
+
+                <pre><code>curl -sfL https://get.k3s.io | K3S_URL="https://10.10.10.11:6443" \
+K3S_TOKEN="&lt;YOUR_TOKEN_HERE&gt;" sh -</code></pre>
+
+                <p>Repeat for worker3:</p>
+
+                <pre><code>ssh ubuntu@10.10.10.13
+curl -sfL https://get.k3s.io | K3S_URL="https://10.10.10.11:6443" \
+K3S_TOKEN="&lt;YOUR_TOKEN_HERE&gt;" sh -</code></pre>
+
+                <p><strong>Important:</strong> Replace <code>&lt;YOUR_TOKEN_HERE&gt;</code> with the actual token from the master node.</p>
+
+                <h3>Step 4: Verify Cluster Health</h3>
+
+                <p>Back on the master node, check that all nodes joined successfully:</p>
+
+                <pre><code>sudo kubectl get nodes</code></pre>
+
+                <p>Expected output:</p>
+
+                <pre><code>NAME      STATUS   ROLES                  AGE   VERSION
+cluster   Ready    control-plane,master   5m    v1.28.x+k3s1
+worker1   Ready    &lt;none&gt;                 2m    v1.28.x+k3s1
+worker3   Ready    &lt;none&gt;                 1m    v1.28.x+k3s1</code></pre>
+
+                <p>All nodes should show <code>Ready</code> status. If a node shows <code>NotReady</code>, check the K3s service logs with <code>sudo journalctl -u k3s -f</code> (master) or <code>sudo journalctl -u k3s-agent -f</code> (workers).</p>
+
+                <div class="info-box" style="text-align: center;">
+                    <img src="images/commands.png" alt="SSH Sessions to K3s Nodes" style="max-width: 100%; border-radius: 8px;">
+                    <p style="margin-top: 1rem; color: var(--text-secondary); font-style: italic;">
+                        <strong>SSH Sessions from PowerShell</strong> - Connecting to K3s master and worker nodes (worker1 and worker3) for cluster management
+                    </p>
+                </div>
+
+                <div class="info-box" style="text-align: center;">
+                    <img src="images/3-node Kubernetes cluster.png" alt="3-Node K3s Cluster Status" style="max-width: 100%; border-radius: 8px;">
+                    <p style="margin-top: 1rem; color: var(--text-secondary); font-style: italic;">
+                        <strong>Live 3-Node K3s Cluster</strong> - All nodes are Ready and running. You can see the nginx deployment is up and running as a test. More applications will be deployed soon!
+                    </p>
+                </div>
+
+                <h2>📁 Part 4: Configuring kubectl on Your Workstation</h2>
+
+                <p>Managing the cluster from your laptop is more convenient than SSH'ing into the master node every time. Let's set up remote access.</p>
+
+                <h3>Copy Kubeconfig from Master</h3>
+
+                <p>On the master node, the kubeconfig file is located at <code>/etc/rancher/k3s/k3s.yaml</code>. Copy it to your laptop:</p>
+
+                <pre><code># On your laptop
+scp ubuntu@10.10.10.11:/etc/rancher/k3s/k3s.yaml ~/.kube/config</code></pre>
+
+                <h3>Update Server Address</h3>
+
+                <p>Edit <code>~/.kube/config</code> and change the server address from <code>127.0.0.1</code> to your master's IP:</p>
+
+                <pre><code>apiVersion: v1
+clusters:
+- cluster:
+    server: https://10.10.10.11:6443  # Change from 127.0.0.1</code></pre>
+
+                <h3>Set Proper Permissions</h3>
+
+                <pre><code>chmod 600 ~/.kube/config</code></pre>
+
+                <h3>Test Remote Access</h3>
+
+                <pre><code>kubectl get nodes</code></pre>
+
+                <p>You should see all three nodes listed. Congratulations! You're now managing your homelab cluster from your workstation.</p>
+
+                <h3>Quick Verification Commands</h3>
+
+                <pre><code># Check cluster info
+kubectl cluster-info
+
+# View all pods across namespaces
+kubectl get pods --all-namespaces
+
+# Check K3s-specific components
+kubectl get pods -n kube-system</code></pre>
+
+                <h2>📊 Architecture Diagram</h2>
+
+                <p>Here's a visual representation of the complete setup:</p>
+
+                <div class="ascii-diagram">
+<pre>                   +------------------------+
+                   |   Lenovo (Admin)       |
+                   |   Pop!_OS              |
+                   |   10.10.10.20          |
+                   |   - Terraform          |
+                   |   - kubectl            |
+                   +-----------+------------+
+                               |
+                           Port 4
+                               |
+                    +----------+----------+
+                    |   Netgear GS108E    |
+                    |   10.10.10.1        |
+                    +----------+----------+
+                         |     |     |
+              +----------+     |     +----------+
+              |                |                |
+          Port 1           Port 2          Port 3
+              |                |                |
+      +-------+------+  +------+-------+  +-----+--------+
+      |   cluster    |  |   worker1    |  |   worker3    |
+      | K3s Master   |  |  K3s Agent   |  |  K3s Agent   |
+      | 10.10.10.11  |  | 10.10.10.12  |  | 10.10.10.13  |
+      |              |  |              |  |              |
+      | Proxmox VM   |  | Proxmox VM   |  | Proxmox VM   |
+      | Ubuntu 22.04 |  | Ubuntu 22.04 |  | Ubuntu 22.04 |
+      +--------------+  +--------------+  +--------------+</pre>
+                </div>
+
+                <h2>🎓 What You've Built</h2>
+
+                <p>Let's recap what you now have running:</p>
+
+                <ul>
+                    <li><strong>High Availability Foundation</strong>: Three-node cluster that can survive single-node failures</li>
+                    <li><strong>Infrastructure as Code</strong>: Reproducible VM deployment via Terraform</li>
+                    <li><strong>Production-Like Environment</strong>: Real Kubernetes distribution (K3s) that behaves like full K8s</li>
+                    <li><strong>Remote Management</strong>: Full kubectl access from your workstation</li>
+                    <li><strong>Scalable Platform</strong>: Ready for deploying applications, testing, and learning</li>
+                </ul>
+
+                <h2>🚀 Next Steps</h2>
+
+                <p>Now that your cluster is running, here are some ideas for what to do next:</p>
+
+                <h3>Deploy Your First Application</h3>
+
+                <pre><code>kubectl create deployment nginx --image=nginx
+kubectl expose deployment nginx --port=80 --type=NodePort
+kubectl get services</code></pre>
+
+                <h3>Install Essential Tools</h3>
+
+                <ul>
+                    <li><strong>Helm</strong>: Package manager for Kubernetes</li>
+                    <li><strong>MetalLB</strong>: Load balancer for bare metal</li>
+                    <li><strong>Cert-Manager</strong>: Automated TLS certificates</li>
+                    <li><strong>Longhorn</strong>: Distributed block storage</li>
+                    <li><strong>Traefik</strong> or <strong>Nginx Ingress</strong>: Ingress controllers</li>
+                </ul>
+
+                <h3>Add Monitoring</h3>
+
+                <ul>
+                    <li><strong>Prometheus + Grafana</strong>: Metrics and visualization</li>
+                    <li><strong>k9s</strong>: Terminal UI for Kubernetes</li>
+                </ul>
+
+                <h3>Explore GitOps</h3>
+
+                <ul>
+                    <li><strong>ArgoCD</strong> or <strong>Flux</strong>: Automated deployments from Git</li>
+                </ul>
+
+                <h2>💡 Tips and Best Practices</h2>
+
+                <p><strong>Backup Your Kubeconfig</strong>: Store it securely and keep backups. Without it, you'll need to SSH into the master to manage the cluster.</p>
+
+                <p><strong>Use Labels</strong>: Tag nodes with roles or capabilities for targeted pod scheduling.</p>
+
+                <p><strong>Resource Limits</strong>: Always set resource requests and limits for production workloads.</p>
+
+                <p><strong>Regular Updates</strong>: Keep K3s updated with <code>sudo systemctl restart k3s</code> (master) and <code>sudo systemctl restart k3s-agent</code> (workers) after upgrading.</p>
+
+                <p><strong>Snapshot VMs</strong>: Take Proxmox snapshots before major changes. They're lifesavers when experiments go wrong.</p>
+
+                <h2>🐛 Troubleshooting Common Issues</h2>
+
+                <p><strong>Node Shows NotReady</strong>: Check network connectivity and ensure K3s service is running.</p>
+
+                <p><strong>Pods Stuck in Pending</strong>: Likely resource constraints. Check with <code>kubectl describe pod &lt;pod-name&gt;</code>.</p>
+
+                <p><strong>Can't Connect from Workstation</strong>: Verify firewall rules allow port 6443 and check kubeconfig server address.</p>
+
+                <p><strong>Worker Won't Join</strong>: Double-check the token and master URL. Token may have expired if master was reinstalled.</p>
+
+                <h2>🎉 Conclusion</h2>
+
+                <p>You now have a fully functional Kubernetes homelab that rivals many production setups. This cluster serves as an excellent learning platform and testing ground for containerized applications.</p>
+
+                <p>The combination of Proxmox for virtualization, Terraform for automation, and K3s for Kubernetes gives you a powerful, reproducible infrastructure that you can tear down and rebuild at will.</p>
+
+                <p>What will you deploy on your cluster first? Let me know in the comments below!</p>
+
+                <hr>
+
+                <a href="index.html" class="back-button">← Back to Blog</a>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="imprint.html">Imprint</a>
+            </div>
+            <div class="footer-copyright">
+                <p>Copyright © Ahmed 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
