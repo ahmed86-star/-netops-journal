@@ -621,34 +621,11 @@ kubectl get pods -n kube-system</code></pre>
 
                 <p>Here's a visual representation of the complete setup:</p>
 
-                <div class="ascii-diagram">
-<pre>                   +------------------------+
-                   |   Lenovo (Admin)       |
-                   |   Pop!_OS              |
-                   |   10.10.10.20          |
-                   |   - Terraform          |
-                   |   - kubectl            |
-                   +-----------+------------+
-                               |
-                           Port 4
-                               |
-                    +----------+----------+
-                    |   Netgear GS108E    |
-                    |   10.10.10.1        |
-                    +----------+----------+
-                         |     |     |
-              +----------+     |     +----------+
-              |                |                |
-          Port 1           Port 2          Port 3
-              |                |                |
-      +-------+------+  +------+-------+  +-----+--------+
-      |   cluster    |  |   worker1    |  |   worker3    |
-      | K3s Master   |  |  K3s Agent   |  |  K3s Agent   |
-      | 10.10.10.11  |  | 10.10.10.12  |  | 10.10.10.13  |
-      |              |  |              |  |              |
-      | Proxmox VM   |  | Proxmox VM   |  | Proxmox VM   |
-      | Ubuntu 22.04 |  | Ubuntu 22.04 |  | Ubuntu 22.04 |
-      +--------------+  +--------------+  +--------------+</pre>
+                <div class="info-box" style="text-align: center;">
+                    <img src="images/diagram.png" alt="Kubernetes Homelab Architecture" style="max-width: 100%; border-radius: 8px;">
+                    <p style="margin-top: 1rem; color: var(--text-secondary); font-style: italic;">
+                        <strong>K3s Cluster Architecture</strong> - Terraform deploys to Proxmox, creating a 3-node Kubernetes cluster with 1 master and 2 worker nodes
+                    </p>
                 </div>
 
                 <h2>🎓 What You've Built</h2>
