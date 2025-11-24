@@ -170,6 +170,7 @@
                     <a href="#" class="nav-link">Categories</a>
                     <ul class="dropdown-menu">
                         <li><a href="index.html#all">All</a></li>
+                        <li><a href="index.html#kubernetes">Kubernetes</a></li>
                         <li><a href="index.html#automation">Automation</a></li>
                         <li><a href="index.html#opensource">Open-source</a></li>
                         <li><a href="index.html#cisco">Cisco Technologies</a></li>
@@ -232,6 +233,17 @@
                     <li><strong>1 master + 2 worker nodes</strong> for true cluster behavior</li>
                     <li><strong>All managed from a single laptop</strong> running Pop!_OS</li>
                 </ul>
+
+                <h2>📊 Architecture Diagram</h2>
+
+                <p>Here's a visual representation of the complete setup:</p>
+
+                <div class="info-box" style="text-align: center;">
+                    <img src="images/diagram.png" alt="Kubernetes Homelab Architecture" style="max-width: 100%; border-radius: 8px;">
+                    <p style="margin-top: 1rem; color: var(--text-secondary); font-style: italic;">
+                        <strong>K3s Cluster Architecture</strong> - Terraform deploys to Proxmox, creating a 3-node Kubernetes cluster with 1 master and 2 worker nodes
+                    </p>
+                </div>
 
                 <h2>🏗️ Architecture Overview</h2>
 
@@ -616,17 +628,6 @@ kubectl get pods --all-namespaces
 
 # Check K3s-specific components
 kubectl get pods -n kube-system</code></pre>
-
-                <h2>📊 Architecture Diagram</h2>
-
-                <p>Here's a visual representation of the complete setup:</p>
-
-                <div class="info-box" style="text-align: center;">
-                    <img src="images/diagram.png" alt="Kubernetes Homelab Architecture" style="max-width: 100%; border-radius: 8px;">
-                    <p style="margin-top: 1rem; color: var(--text-secondary); font-style: italic;">
-                        <strong>K3s Cluster Architecture</strong> - Terraform deploys to Proxmox, creating a 3-node Kubernetes cluster with 1 master and 2 worker nodes
-                    </p>
-                </div>
 
                 <h2>🎓 What You've Built</h2>
 
