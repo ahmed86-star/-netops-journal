@@ -342,11 +342,11 @@
                                 <span>📋</span> Copy
                             </button>
                         </div>
-                        <pre><code>set system host-name ahmedllc
+                        <pre><code>set system host-name your-hostname
 set system time-zone America/New_York</code></pre>
                     </div>
 
-                    <p>Look, I know this seems basic, but coming from Cisco land where everything is "enable" and "conf t", Juniper does things differently. Just set the hostname to whatever and pick your timezone. I went with "ahmedllc" because why not.</p>
+                    <p>Look, I know this seems basic, but coming from Cisco land where everything is "enable" and "conf t", Juniper does things differently. Just set the hostname to whatever and pick your timezone.</p>
 
                     <p>The timezone thing? Honestly just helps with logs. Set it and forget it.</p>
 
@@ -373,14 +373,14 @@ set system time-zone America/New_York</code></pre>
                                 <span>📋</span> Copy
                             </button>
                         </div>
-                        <pre><code>set system login user ahmed1 uid 2000
-set system login user ahmed1 class super-user
-set system login user ahmed1 authentication plain-text-password</code></pre>
+                        <pre><code>set system login user your-username uid 2000
+set system login user your-username class super-user
+set system login user your-username authentication plain-text-password</code></pre>
                     </div>
 
                     <p>Here's something I didn't know coming from Cisco - logging in as root makes you type "cli" every time to get to the command line. Kinda annoying.</p>
 
-                    <p>So I just created "ahmed1" with superuser access. Same permissions, but drops you straight into CLI when you SSH in. Much better.</p>
+                    <p>So I just created a user with superuser access. Same permissions, but drops you straight into CLI when you SSH in. Much better.</p>
 
                     <p>The "uid 2000" is just an ID number. Pick whatever over 2000, doesn't matter.</p>
 
@@ -402,7 +402,7 @@ set system login user ahmed1 authentication plain-text-password</code></pre>
                         </div>
                         <pre><code>set system name-server 8.8.8.8
 set system name-server 1.1.1.1
-set system domain-name ahmedllc.local</code></pre>
+set system domain-name yourdomain.local</code></pre>
                     </div>
 
                     <div class="info-box">
@@ -412,7 +412,7 @@ set system domain-name ahmedllc.local</code></pre>
 
                     <p>I'm using Google's DNS (8.8.8.8) and Cloudflare's (1.1.1.1) because they're free, fast, and reliable. You could use your router's IP if you want, but these public ones just work.</p>
 
-                    <p>The domain-name thing? That's just for local stuff. I set mine to "ahmedllc.local" so my switch knows it's part of my network. Not critical, but it's good practice.</p>
+                    <p>The domain-name thing? That's just for local stuff. Set it to your local domain so your switch knows it's part of your network. Not critical, but it's good practice.</p>
 
                     <h3>Time Sync - Keeping Everything on Schedule</h3>
 
@@ -490,21 +490,21 @@ set vlans GUEST l3-interface irb.30</code></pre>
                                 <span>📋</span> Copy
                             </button>
                         </div>
-                        <pre><code>set interfaces irb unit 10 family inet address 192.168.10.1/24
-set interfaces irb unit 20 family inet address 192.168.20.1/24
-set interfaces irb unit 30 family inet address 192.168.30.1/24</code></pre>
+                        <pre><code>set interfaces irb unit 10 family inet address x.x.10.1/24
+set interfaces irb unit 20 family inet address x.x.20.1/24
+set interfaces irb unit 30 family inet address x.x.30.1/24</code></pre>
                     </div>
 
                     <p>Each VLAN needs a gateway IP - that's what devices use as their "exit point" to reach other networks.</p>
 
                     <p>I kept it simple:</p>
                     <ul>
-                        <li>VLAN 10 gets 192.168.10.1 (10 in the third octet matches VLAN 10 - easy to remember!)</li>
-                        <li>VLAN 20 gets 192.168.20.1 (see the pattern?)</li>
-                        <li>VLAN 30 gets 192.168.30.1 (yep, still following the pattern)</li>
+                        <li>VLAN 10 gets x.x.10.1 (10 in the third octet matches VLAN 10 - easy to remember!)</li>
+                        <li>VLAN 20 gets x.x.20.1 (see the pattern?)</li>
+                        <li>VLAN 30 gets x.x.30.1 (yep, still following the pattern)</li>
                     </ul>
 
-                    <p>The "/24" means devices can use IPs from .1 to .254 in that range. So VLAN 10 can have 192.168.10.2, 192.168.10.3, all the way up to 192.168.10.254.</p>
+                    <p>The "/24" means devices can use IPs from .1 to .254 in that range. So VLAN 10 can have x.x.10.2, x.x.10.3, all the way up to x.x.10.254.</p>
 
                     <h3>The Loopback - Your Switch's Permanent Address</h3>
 
@@ -515,10 +515,10 @@ set interfaces irb unit 30 family inet address 192.168.30.1/24</code></pre>
                                 <span>📋</span> Copy
                             </button>
                         </div>
-                        <pre><code>set interfaces lo0 unit 0 family inet address 192.168.0.56/32</code></pre>
+                        <pre><code>set interfaces lo0 unit 0 family inet address x.x.x.x/32</code></pre>
                     </div>
 
-                    <p>This is the switch's management IP. I set it to 192.168.0.56 (avoiding my router at .232).</p>
+                    <p>This is the switch's management IP. Pick an available IP in your management network.</p>
 
                     <div class="info-box">
                         <h4>🎯 Why Loopback?</h4>
@@ -609,14 +609,14 @@ wildcard range set interfaces ge-0/0/[1-47] unit 0 family ethernet-switching sto
                                 <span>📋</span> Copy
                             </button>
                         </div>
-                        <pre><code>set forwarding-options dhcp-relay server-group dhcp-srv 192.168.0.232
+                        <pre><code>set forwarding-options dhcp-relay server-group dhcp-srv x.x.x.x
 set forwarding-options dhcp-relay active-server-group dhcp-srv
 set forwarding-options dhcp-relay group all interface irb.10
 set forwarding-options dhcp-relay group all interface irb.20
 set forwarding-options dhcp-relay group all interface irb.30</code></pre>
                     </div>
 
-                    <p>My router (192.168.0.232) runs the DHCP server. But devices on VLAN 10, 20, and 30 can't directly talk to it without help.</p>
+                    <p>Your router (replace x.x.x.x with your router's IP) runs the DHCP server. But devices on VLAN 10, 20, and 30 can't directly talk to it without help.</p>
 
                     <p>DHCP relay is the middleman. When a device on VLAN 10 says "hey, I need an IP address!" the switch forwards that request to the router, gets a response, and sends it back to the device.</p>
 
@@ -708,10 +708,10 @@ set protocols layer2-control bpdu-block disable-timeout 300</code></pre>
                                 <span>📋</span> Copy
                             </button>
                         </div>
-                        <pre><code>set snmp name "ahmedllc"
-set snmp description "AhmedLLC Juniper EX4300-48P"
-set snmp location "Main Office"
-set snmp contact "Ahmed Network Admin"
+                        <pre><code>set snmp name "your-network-name"
+set snmp description "Your Organization Juniper EX4300-48P"
+set snmp location "Your Location"
+set snmp contact "Your Name - Network Admin"
 set snmp community public authorization read-only</code></pre>
                     </div>
 
@@ -762,15 +762,15 @@ set system syslog file interactive-commands interactive-commands any</code></pre
                                 <span>📋</span> Copy
                             </button>
                         </div>
-                        <pre><code>set routing-options static route 0.0.0.0/0 next-hop 192.168.0.232
-set routing-options router-id 192.168.0.56</code></pre>
+                        <pre><code>set routing-options static route 0.0.0.0/0 next-hop x.x.x.x
+set routing-options router-id x.x.x.x</code></pre>
                     </div>
 
                     <p>This is probably the simplest but most important routing config.</p>
 
                     <p><code>0.0.0.0/0</code> means "any IP address" - it's the default route, the catch-all. It says "if you don't know where to send traffic, send it here."</p>
 
-                    <p>My router is at 192.168.0.232, so that's the next-hop. All internet-bound traffic goes there.</p>
+                    <p>Replace x.x.x.x with your router's IP address as the next-hop. All internet-bound traffic goes there.</p>
 
                     <div class="section-divider"></div>
 
@@ -828,10 +828,10 @@ set routing-options graceful-restart</code></pre>
 
                     <p>After committing, here's what I tested:</p>
                     <ol>
-                        <li>✅ <strong>Can I still SSH in?</strong> (Yes - 192.168.0.56 worked fine)</li>
-                        <li>✅ <strong>Do devices get IPs?</strong> (Plugged in a laptop, got 192.168.10.x address - perfect!)</li>
+                        <li>✅ <strong>Can I still SSH in?</strong> (Yes - used the management IP and it worked fine)</li>
+                        <li>✅ <strong>Do devices get IPs?</strong> (Plugged in a laptop, got an IP from VLAN 10 - perfect!)</li>
                         <li>✅ <strong>Does internet work?</strong> (Yep, browsed to google.com successfully)</li>
-                        <li>✅ <strong>Can I access the web UI?</strong> (http://192.168.0.56 - worked!)</li>
+                        <li>✅ <strong>Can I access the web UI?</strong> (Used the management IP in browser - worked!)</li>
                     </ol>
 
                     <p>If any of those failed, I'd know something was wrong and could troubleshoot from there.</p>
