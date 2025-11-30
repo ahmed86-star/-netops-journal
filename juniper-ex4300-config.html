@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning to Configure a Juniper EX4300 Switch | NetOps Journal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        .hero-image {
+            width: 100%;
+            max-width: 700px;
+            margin: 2rem auto;
+            display: block;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .hero-image:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--glow-primary);
+            transform: scale(1.02);
+            transition: all 0.3s ease;
+        }
+
+        .switch-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .switch-images img {
+            width: 100%;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+        }
+
+        .switch-images img:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--glow-primary);
+            transform: translateY(-5px);
+        }
+        
+        .terminal {
+            position: relative;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border: 2px solid var(--border-color);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .terminal::before {
+            content: '⬤ ⬤ ⬤';
+            display: block;
+            color: #555;
+            font-size: 0.8rem;
+            margin-bottom: 0.8rem;
+            letter-spacing: 0.3rem;
+        }
+        
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+
+        .terminal-title {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .copy-btn {
+            background-color: var(--bg-secondary);
+            color: var(--primary-color);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .copy-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--bg-primary);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--glow-primary);
+        }
+
+        .copy-btn.copied {
+            background-color: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        
+        .terminal pre {
+            background-color: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            overflow-x: auto;
+        }
+        
+        .terminal code {
+            background-color: transparent;
+            color: #d4d4d4;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            display: block;
+            white-space: pre;
+        }
+
+        .command-line {
+            color: #4ec9b0;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+            margin: 3rem 0;
+        }
+
+        .info-box {
+            background-color: var(--bg-card);
+            border-left: 4px solid var(--accent-color);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .info-box h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+
+        .info-box p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .emoji-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin: 2.5rem 0 1rem 0;
+        }
+
+        .emoji-header h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+
+        .emoji-header .emoji {
+            font-size: 2rem;
+        }
+
+        .vlan-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .vlan-card {
+            background-color: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .vlan-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: var(--glow-primary);
+        }
+
+        .vlan-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+
+        .vlan-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .useful-commands {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 2px solid var(--border-color);
+        }
+
+        .useful-commands h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .command-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            padding: 1rem;
+            background-color: var(--bg-secondary);
+            margin: 0.8rem 0;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .command-item:hover {
+            border-color: var(--primary-color);
+            background-color: var(--bg-card);
+        }
+
+        .command-text {
+            flex: 1;
+        }
+
+        .command-text code {
+            color: #4ec9b0;
+            font-size: 0.9rem;
+        }
+
+        .command-text .description {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/netops.jpg" alt="NetOps Journal Logo" class="nav-logo-img">
+                <div class="nav-logo-text">
+                    <a href="index.html">NetOps Journal</a>
+                    <span class="nav-logo-tagline">Where networking meets automation.</span>
+                </div>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link">Categories</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="index.html#all">All</a></li>
+                        <li><a href="index.html#kubernetes">Kubernetes</a></li>
+                        <li><a href="index.html#automation">Automation</a></li>
+                        <li><a href="index.html#opensource">Open-source</a></li>
+                        <li><a href="index.html#cisco">Cisco Technologies</a></li>
+                        <li><a href="index.html#juniper">Juniper Technologies</a></li>
+                        <li><a href="index.html#homeautomation">Home-Automation</a></li>
+                        <li><a href="index.html#homelab">Home-Lab</a></li>
+                        <li><a href="index.html#certifications">Certifications</a></li>
+                        <li><a href="index.html#projects">Projects</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="index.html" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="projects.html" class="nav-link">Projects</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="about.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Skip to content -->
+    <a href="#main-content" class="skip-link">Skip to content</a>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <span class="theme-toggle-icon">🎨</span>
+        <span class="theme-toggle-text">Change Theme</span>
+    </button>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+        <article class="blog-post">
+            <div class="container">
+                <div class="blog-header">
+                    <span class="blog-category-badge">Juniper Technologies</span>
+                    <h1 class="blog-post-title">🔧 Learning to Configure a Juniper EX4300 Switch</h1>
+                    <div class="blog-meta">
+                        <span class="blog-date">November 2025</span>
+                        <span class="blog-reading-time">15 min read</span>
+                        <span class="blog-author">By Ahmed</span>
+                    </div>
+                </div>
+
+                <img src="images/juniper.jpg" alt="Juniper EX4300 Switch" class="hero-image">
+
+                <div class="blog-content">
+                    <p>So my buddy had this Juniper EX4300-48P switch sitting around and basically gave it to me. I've got my CCNA and figured I'd mess around with it before I eventually go for the JNCIA cert. No pressure, just wanted to see what all the Juniper hype was about.</p>
+                    
+                    <p>Turns out configuring this thing was... an experience. I'm writing this down mostly for myself so I remember what I did, but figured someone else might find it useful. This isn't textbook stuff - just me figuring things out as I go.</p>
+
+                    <div class="section-divider"></div>
+
+                    <div class="emoji-header">
+                        <span class="emoji">🚀</span>
+                        <h2>Part 1: Getting Started - The Basics</h2>
+                    </div>
+
+                    <h3>First Things First: Setting the Hostname</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>set system host-name ahmedllc
+set system time-zone America/New_York</code></pre>
+                    </div>
+
+                    <p>Look, I know this seems basic, but coming from Cisco land where everything is "enable" and "conf t", Juniper does things differently. Just set the hostname to whatever and pick your timezone. I went with "ahmedllc" because why not.</p>
+
+                    <p>The timezone thing? Honestly just helps with logs. Set it and forget it.</p>
+
+                    <h3>Passwords - Don't Skip This!</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>set system root-authentication plain-text-password</code></pre>
+                    </div>
+
+                    <p>When you run this, it'll prompt you twice. Pick something decent. Not gonna lecture you on password security - you know the drill from CCNA.</p>
+
+                    <h3>Creating Your Daily Driver Account</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>set system login user ahmed1 uid 2000
+set system login user ahmed1 class super-user
+set system login user ahmed1 authentication plain-text-password</code></pre>
+                    </div>
+
+                    <p>Here's something I didn't know coming from Cisco - logging in as root makes you type "cli" every time to get to the command line. Kinda annoying.</p>
+
+                    <p>So I just created "ahmed1" with superuser access. Same permissions, but drops you straight into CLI when you SSH in. Much better.</p>
+
+                    <p>The "uid 2000" is just an ID number. Pick whatever over 2000, doesn't matter.</p>
+
+                    <div class="section-divider"></div>
+
+                    <div class="emoji-header">
+                        <span class="emoji">🌐</span>
+                        <h2>Part 2: Making the Switch Actually Work on Your Network</h2>
+                    </div>
+
+                    <h3>DNS - Because Nobody Remembers IP Addresses</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>set system name-server 8.8.8.8
+set system name-server 1.1.1.1
+set system domain-name ahmedllc.local</code></pre>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>💡 Why DNS Matters</h4>
+                        <p>Computers talk in IP addresses, but humans think in names. DNS is the translator. When I tried to download firmware earlier and the switch kept saying "can't resolve host" - that's because I hadn't set up DNS yet. Rookie mistake.</p>
+                    </div>
+
+                    <p>I'm using Google's DNS (8.8.8.8) and Cloudflare's (1.1.1.1) because they're free, fast, and reliable. You could use your router's IP if you want, but these public ones just work.</p>
+
+                    <p>The domain-name thing? That's just for local stuff. I set mine to "ahmedllc.local" so my switch knows it's part of my network. Not critical, but it's good practice.</p>
+
+                    <h3>Time Sync - Keeping Everything on Schedule</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>set system ntp server 0.pool.ntp.org
+set system ntp server 1.pool.ntp.org</code></pre>
+                    </div>
+
+                    <p>Your switch has a clock. That clock sucks at keeping time. NTP (Network Time Protocol) fixes that by syncing with internet time servers.</p>
+
+                    <p>Why do you care? Because when you're looking at logs trying to figure out when something broke, you need accurate timestamps. Also, some security stuff like certificates actually check the time, and if your switch thinks it's 2015, things get weird.</p>
+
+                    <div class="section-divider"></div>
+
+                    <div class="switch-images">
+                        <img src="images/ex4300-48p-front-high.jpg" alt="Juniper EX4300-48P Front Panel">
+                        <img src="images/ex4300-24poe-rear-high.jpg" alt="Juniper EX4300 Rear Panel">
+                    </div>
+
+                    <div class="section-divider"></div>
+
+                    <div class="emoji-header">
+                        <span class="emoji">🔀</span>
+                        <h2>Part 3: VLANs - The Heart of Network Organization</h2>
+                    </div>
+
+                    <p>Alright, this is where it gets interesting. VLANs are basically how you split one physical switch into multiple virtual switches. It's like having different floors in a building - they're all in the same building, but they're separate spaces.</p>
+
+                    <h3>Creating the VLANs</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>set vlans DATA vlan-id 10
+set vlans DATA l3-interface irb.10
+set vlans VOICE vlan-id 20
+set vlans VOICE l3-interface irb.20
+set vlans GUEST vlan-id 30
+set vlans GUEST l3-interface irb.30</code></pre>
+                    </div>
+
+                    <div class="vlan-grid">
+                        <div class="vlan-card">
+                            <h4>🖥️ VLAN 10 (DATA)</h4>
+                            <p>This is where all my computers, printers, and regular devices go. Your everyday stuff.</p>
+                        </div>
+                        <div class="vlan-card">
+                            <h4>📞 VLAN 20 (VOICE)</h4>
+                            <p>For IP phones. Why separate? Because voice traffic needs priority. If your phone call gets laggy because someone's downloading a 4K movie, that's a problem. Separate VLAN = separate traffic = better call quality.</p>
+                        </div>
+                        <div class="vlan-card">
+                            <h4>👥 VLAN 30 (GUEST)</h4>
+                            <p>For visitors' phones and laptops. You want guests to have internet, but you DON'T want them poking around your file server or smart home devices. Guest VLAN keeps them isolated.</p>
+                        </div>
+                    </div>
+
+                    <p>The "l3-interface irb.X" part means this VLAN can route traffic. The switch isn't just moving packets around - it's actually smart enough to route between VLANs if needed.</p>
+
+                    <h3>Giving Each VLAN an IP Address</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>set interfaces irb unit 10 family inet address 192.168.10.1/24
+set interfaces irb unit 20 family inet address 192.168.20.1/24
+set interfaces irb unit 30 family inet address 192.168.30.1/24</code></pre>
+                    </div>
+
+                    <p>Each VLAN needs a gateway IP - that's what devices use as their "exit point" to reach other networks.</p>
+
+                    <p>I kept it simple:</p>
+                    <ul>
+                        <li>VLAN 10 gets 192.168.10.1 (10 in the third octet matches VLAN 10 - easy to remember!)</li>
+                        <li>VLAN 20 gets 192.168.20.1 (see the pattern?)</li>
+                        <li>VLAN 30 gets 192.168.30.1 (yep, still following the pattern)</li>
+                    </ul>
+
+                    <p>The "/24" means devices can use IPs from .1 to .254 in that range. So VLAN 10 can have 192.168.10.2, 192.168.10.3, all the way up to 192.168.10.254.</p>
+
+                    <h3>The Loopback - Your Switch's Permanent Address</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>set interfaces lo0 unit 0 family inet address 192.168.0.56/32</code></pre>
+                    </div>
+
+                    <p>This is the switch's management IP. I set it to 192.168.0.56 (avoiding my router at .232).</p>
+
+                    <div class="info-box">
+                        <h4>🎯 Why Loopback?</h4>
+                        <p>Because loopback is ALWAYS up. Even if a VLAN goes down, even if ports fail - this IP stays alive. It's the one address you can always count on to reach your switch.</p>
+                    </div>
+
+                    <div class="section-divider"></div>
+
+                    <div class="emoji-header">
+                        <span class="emoji">🔌</span>
+                        <h2>Part 4: Configuring the Physical Ports</h2>
+                    </div>
+
+                    <h3>Making Ports Actually Do Something</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>wildcard range set interfaces ge-0/0/[1-47] unit 0 family ethernet-switching interface-mode access
+wildcard range delete interfaces ge-0/0/[1-47] unit 0 family ethernet-switching vlan members default
+wildcard range set interfaces ge-0/0/[1-47] unit 0 family ethernet-switching vlan members DATA</code></pre>
+                    </div>
+
+                    <p>By default, all ports are in VLAN 1 (the "default" VLAN). That's not useful for us.</p>
+
+                    <p><strong>What these commands do:</strong></p>
+                    <ol>
+                        <li>Set ports 1-47 as "access" ports (regular ports for end devices)</li>
+                        <li>Remove them from the default VLAN</li>
+                        <li>Add them to the DATA VLAN</li>
+                    </ol>
+
+                    <p>Notice I did 1-47, not 1-48? That's because port 0 is my uplink to the router. I left that one alone for now.</p>
+
+                    <p>The "wildcard range" thing is Juniper's way of configuring multiple ports at once. In Cisco land, you'd use "interface range" - same concept, different syntax.</p>
+
+                    <h3>Adding Voice VLAN to Those Same Ports</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>wildcard range set switch-options voip interface ge-0/0/[1-47].0 vlan VOICE
+wildcard range set switch-options voip interface ge-0/0/[1-47].0 forwarding-class expedited-forwarding</code></pre>
+                    </div>
+
+                    <p>Here's the cool part - IP phones are smart. They can be on TWO VLANs at once. The phone itself talks on VLAN 20 (VOICE), but the computer plugged into the back of the phone talks on VLAN 10 (DATA).</p>
+
+                    <p>The "expedited-forwarding" bit tells the switch "hey, this voice traffic is important, prioritize it." That's QoS (Quality of Service) in action - making sure voice packets get through even when the network is busy.</p>
+
+                    <div class="section-divider"></div>
+
+                    <div class="emoji-header">
+                        <span class="emoji">🔒</span>
+                        <h2>Part 5: Security Features That Actually Matter</h2>
+                    </div>
+
+                    <h3>Storm Control - Stopping Broadcast Storms</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>set forwarding-options storm-control-profiles standardsc all bandwidth-percentage 20
+wildcard range set interfaces ge-0/0/[1-47] unit 0 family ethernet-switching storm-control standardsc</code></pre>
+                    </div>
+
+                    <p>Ever seen a network completely melt down because someone plugged both ends of a cable into the same switch? That's a broadcast storm. Packets just loop forever, consuming all your bandwidth.</p>
+
+                    <p>Storm control says "if any port starts flooding more than 20% of its bandwidth with broadcast traffic, shut it down." It's like a circuit breaker - saves you from network disasters.</p>
+
+                    <h3>DHCP Relay - Connecting VLANs to Your DHCP Server</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>set forwarding-options dhcp-relay server-group dhcp-srv 192.168.0.232
+set forwarding-options dhcp-relay active-server-group dhcp-srv
+set forwarding-options dhcp-relay group all interface irb.10
+set forwarding-options dhcp-relay group all interface irb.20
+set forwarding-options dhcp-relay group all interface irb.30</code></pre>
+                    </div>
+
+                    <p>My router (192.168.0.232) runs the DHCP server. But devices on VLAN 10, 20, and 30 can't directly talk to it without help.</p>
+
+                    <p>DHCP relay is the middleman. When a device on VLAN 10 says "hey, I need an IP address!" the switch forwards that request to the router, gets a response, and sends it back to the device.</p>
+
+                    <h3>DHCP Security - Blocking Rogue DHCP Servers</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>set vlans DATA forwarding-options dhcp-security group trusted overrides trusted
+set vlans DATA forwarding-options dhcp-security group trusted interface ge-0/0/0.0
+wildcard range set vlans DATA forwarding-options dhcp-security group untrusted interface ge-0/0/[1-47].0</code></pre>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>⚠️ The Rogue DHCP Scenario</h4>
+                        <p>Someone brings in a cheap router from home and plugs it into your network. Their router starts giving out DHCP addresses. Now half your devices are getting IPs from the wrong server, wrong gateway, wrong DNS - everything breaks. DHCP security prevents this!</p>
+                    </div>
+
+                    <h3>MAC Address Limiting - Preventing Port Flooding</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>wildcard range set switch-options interface ge-0/0/[1-47] interface-mac-limit 3 packet-action shutdown
+wildcard range set interfaces ge-0/0/[1-47] unit 0 family ethernet-switching recovery-timeout 300</code></pre>
+                    </div>
+
+                    <p>Each port can learn a maximum of 3 MAC addresses. Why?</p>
+                    <ul>
+                        <li><strong>Normal scenario:</strong> Computer (1 MAC) + IP phone (1 MAC) + maybe a VM or something (1 MAC) = 3 MACs. Perfect.</li>
+                        <li><strong>Attack scenario:</strong> Hacker floods the network with fake MAC addresses trying to overwhelm the switch's MAC table. This stops them cold.</li>
+                    </ul>
+
+                    <p>If a port exceeds 3 MACs, the switch shuts it down. After 300 seconds (5 minutes), it automatically tries to bring the port back up.</p>
+
+                    <div class="section-divider"></div>
+
+                    <div class="emoji-header">
+                        <span class="emoji">🌳</span>
+                        <h2>Part 6: Spanning Tree - Preventing Network Loops</h2>
+                    </div>
+
+                    <h3>RSTP Configuration</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>wildcard range set protocols rstp interface ge-0/0/[1-47] edge
+set protocols rstp bridge-priority 16384
+set protocols rstp bpdu-block-on-edge
+set protocols layer2-control bpdu-block disable-timeout 300</code></pre>
+                    </div>
+
+                    <p>RSTP (Rapid Spanning Tree Protocol) is insurance against network loops. Remember that cable-plugged-into-itself scenario? RSTP automatically detects loops and shuts them down.</p>
+
+                    <p><strong>What each line does:</strong></p>
+                    <ul>
+                        <li><code>edge</code> - Tells the switch "these ports connect to end devices (computers, phones), not other switches." This makes them come up faster.</li>
+                        <li><code>bridge-priority 16384</code> - This is the switch's "rank" in the spanning tree hierarchy. Lower numbers win.</li>
+                        <li><code>bpdu-block-on-edge</code> - If an "edge" port starts receiving BPDUs, something's wrong - maybe someone plugged in a rogue switch. This blocks those BPDUs.</li>
+                        <li><code>disable-timeout 300</code> - If a port gets blocked, wait 300 seconds (5 minutes) then try to bring it back up. Auto-recovery.</li>
+                    </ul>
+
+                    <div class="section-divider"></div>
+
+                    <div class="emoji-header">
+                        <span class="emoji">📊</span>
+                        <h2>Part 7: Monitoring and Management</h2>
+                    </div>
+
+                    <h3>SNMP - Keeping an Eye on Things</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>set snmp name "ahmedllc"
+set snmp description "AhmedLLC Juniper EX4300-48P"
+set snmp location "Main Office"
+set snmp contact "Ahmed Network Admin"
+set snmp community public authorization read-only</code></pre>
+                    </div>
+
+                    <p>SNMP (Simple Network Management Protocol) lets monitoring tools check on your switch. Think of it like a health check-up.</p>
+
+                    <p>Network monitoring software (like PRTG, Zabbix, or even HomeAssistant) can connect to your switch via SNMP and see:</p>
+                    <ul>
+                        <li>How much traffic is flowing</li>
+                        <li>Are any ports down?</li>
+                        <li>Is CPU/memory getting high?</li>
+                        <li>Any errors happening?</li>
+                    </ul>
+
+                    <h3>System Logging</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>set system syslog file messages any notice
+set system syslog file messages authorization info
+set system syslog file interactive-commands interactive-commands any</code></pre>
+                    </div>
+
+                    <p>Logs are your best friend when troubleshooting. These commands tell the switch what to log:</p>
+                    <ul>
+                        <li><code>any notice</code> - Log anything that's noteworthy (but not super critical)</li>
+                        <li><code>authorization info</code> - Log all login attempts (who logged in when)</li>
+                        <li><code>interactive-commands</code> - Log every command that gets run (good for security/auditing)</li>
+                    </ul>
+
+                    <div class="section-divider"></div>
+
+                    <div class="emoji-header">
+                        <span class="emoji">🛣️</span>
+                        <h2>Part 8: Routing - Getting Traffic Out to the Internet</h2>
+                    </div>
+
+                    <h3>Static Route Configuration</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>set routing-options static route 0.0.0.0/0 next-hop 192.168.0.232
+set routing-options router-id 192.168.0.56</code></pre>
+                    </div>
+
+                    <p>This is probably the simplest but most important routing config.</p>
+
+                    <p><code>0.0.0.0/0</code> means "any IP address" - it's the default route, the catch-all. It says "if you don't know where to send traffic, send it here."</p>
+
+                    <p>My router is at 192.168.0.232, so that's the next-hop. All internet-bound traffic goes there.</p>
+
+                    <div class="section-divider"></div>
+
+                    <div class="emoji-header">
+                        <span class="emoji">⚡</span>
+                        <h2>Part 9: High Availability Features</h2>
+                    </div>
+
+                    <h3>Graceful Restart</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>set chassis redundancy graceful-switchover
+set routing-options graceful-restart</code></pre>
+                    </div>
+
+                    <p>These are "nice to have" features. If the switch needs to reboot or if you're running a stack of switches and one fails, these settings help minimize downtime.</p>
+
+                    <p>Graceful restart means "try to keep forwarding traffic even during software restarts when possible." It won't always work perfectly, but when it does, it's the difference between a 2-second blip and a 30-second outage.</p>
+
+                    <div class="section-divider"></div>
+
+                    <div class="emoji-header">
+                        <span class="emoji">✅</span>
+                        <h2>Part 10: Final Steps and Testing</h2>
+                    </div>
+
+                    <h3>Commit and Save</h3>
+
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-title">📟 Junos CLI</span>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <pre><code>commit and-quit</code></pre>
+                    </div>
+
+                    <p>This is the magic command. Until you run "commit," all your changes are just sitting in a staging area. They're not actually active.</p>
+
+                    <p><code>commit</code> saves everything and makes it live. <code>and-quit</code> exits configuration mode.</p>
+
+                    <div class="info-box">
+                        <h4>💡 Pro Tip: Safety Net</h4>
+                        <p>If you're nervous about a big config change, use <code>commit confirmed 5</code> instead. This commits the config but will automatically roll it back after 5 minutes UNLESS you confirm it worked. It's a safety net - if you lock yourself out, the switch reverts after 5 minutes and you can get back in.</p>
+                    </div>
+
+                    <h3>Testing Your Setup</h3>
+
+                    <p>After committing, here's what I tested:</p>
+                    <ol>
+                        <li>✅ <strong>Can I still SSH in?</strong> (Yes - 192.168.0.56 worked fine)</li>
+                        <li>✅ <strong>Do devices get IPs?</strong> (Plugged in a laptop, got 192.168.10.x address - perfect!)</li>
+                        <li>✅ <strong>Does internet work?</strong> (Yep, browsed to google.com successfully)</li>
+                        <li>✅ <strong>Can I access the web UI?</strong> (http://192.168.0.56 - worked!)</li>
+                    </ol>
+
+                    <p>If any of those failed, I'd know something was wrong and could troubleshoot from there.</p>
+
+                    <div class="section-divider"></div>
+
+                    <div class="emoji-header">
+                        <span class="emoji">💭</span>
+                        <h2>What I Learned</h2>
+                    </div>
+
+                    <p>Honestly? Juniper syntax takes some getting used to when you're coming from Cisco. Everything is "set" commands instead of going into config sub-modes. Kinda prefer it actually - feels cleaner.</p>
+
+                    <p>The VLAN setup was straightforward once I wrapped my head around the IRB interfaces. It's basically Cisco's SVI but with a different name.</p>
+
+                    <p>DHCP relay was probably the most confusing part. In Cisco you do "ip helper-address" and call it a day. Juniper has this whole server-group thing. Works fine once it's set up though.</p>
+
+                    <div class="section-divider"></div>
+
+                    <div class="emoji-header">
+                        <span class="emoji">🚀</span>
+                        <h2>Next Steps</h2>
+                    </div>
+
+                    <p>Not really sure yet. Might play around with OSPF just to see how it compares to Cisco. Eventually I'll study for JNCIA properly, but for now I'm just messing around and learning by doing.</p>
+
+                    <p>Switch works, internet works, can't complain. Good enough for me.</p>
+
+                    <div class="section-divider"></div>
+
+                    <div class="useful-commands">
+                        <h3>⚡ Useful Commands I Use Daily</h3>
+                        
+                        <div class="command-item">
+                            <div class="command-text">
+                                <code>show vlans</code>
+                                <div class="description">See all VLANs and which ports are in them</div>
+                            </div>
+                        </div>
+
+                        <div class="command-item">
+                            <div class="command-text">
+                                <code>show interfaces terse</code>
+                                <div class="description">Quick view of all ports and their status</div>
+                            </div>
+                        </div>
+
+                        <div class="command-item">
+                            <div class="command-text">
+                                <code>show ethernet-switching table</code>
+                                <div class="description">See which MAC addresses are on which ports</div>
+                            </div>
+                        </div>
+
+                        <div class="command-item">
+                            <div class="command-text">
+                                <code>show system storage</code>
+                                <div class="description">Check disk space</div>
+                            </div>
+                        </div>
+
+                        <div class="command-item">
+                            <div class="command-text">
+                                <code>show log messages | last 50</code>
+                                <div class="description">See the last 50 log entries</div>
+                            </div>
+                        </div>
+
+                        <div class="command-item">
+                            <div class="command-text">
+                                <code>show configuration | display set | no-more</code>
+                                <div class="description">Backup current config</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-divider"></div>
+
+                    <div class="info-box" style="background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-secondary) 100%); border-left: 4px solid var(--primary-color);">
+                        <h4>🎯 Final Thoughts</h4>
+                        <p>Coming from CCNA, Juniper is different but not hard. Just different syntax and philosophy. The whole "commit" thing is nice - lets you stage changes before they go live. Cisco's getting there with their newer stuff but Junos has had it forever.</p>
+                        <p>Anyway, that's my config. Works for me. Your mileage may vary.</p>
+                        <p style="margin-top: 1rem; font-style: italic; color: var(--primary-color);">-Ahmed</p>
+                    </div>
+                </div>
+
+                <div class="blog-navigation" style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid var(--border-color);">
+                    <a href="index.html" class="btn btn-secondary">← Back to Blog</a>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="imprint.html">Imprint</a>
+            </div>
+            <div class="footer-copyright">
+                <p>Copyright © Ahmed 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        function copyCode(button) {
+            const terminal = button.closest('.terminal');
+            const code = terminal.querySelector('code');
+            const text = code.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<span>✓</span> Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
+
