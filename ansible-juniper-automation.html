@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automating My Juniper Switch with Ansible | NetOps Journal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        .hero-title-big {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 2rem;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title-big {
+                font-size: 2.5rem;
+            }
+        }
+
+        .proof-section {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .proof-section h3 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .proof-section p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .proof-image {
+            width: 100%;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            margin-top: 1rem;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+        }
+
+        .proof-image:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--glow-primary);
+            transform: scale(1.02);
+        }
+
+        .command-table {
+            width: 100%;
+            margin: 1rem 0;
+            border-collapse: collapse;
+        }
+
+        .command-table th,
+        .command-table td {
+            padding: 0.8rem;
+            text-align: left;
+            border: 1px solid var(--border-color);
+        }
+
+        .command-table th {
+            background: var(--bg-secondary);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .command-table code {
+            background: var(--bg-primary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .terminal {
+            position: relative;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border: 2px solid var(--border-color);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .terminal::before {
+            content: '⬤ ⬤ ⬤';
+            display: block;
+            color: #555;
+            font-size: 0.8rem;
+            margin-bottom: 0.8rem;
+            letter-spacing: 0.3rem;
+        }
+        
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+
+        .terminal-title {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .copy-btn {
+            background-color: var(--bg-secondary);
+            color: var(--primary-color);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .copy-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--bg-primary);
+            border-color: var(--primary-color);
+            box-shadow: var(--glow-primary);
+        }
+        
+        .copy-btn.copied {
+            background-color: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/netops.jpg" alt="NetOps Journal Logo" class="nav-logo-img">
+                <div class="nav-logo-text">
+                    <a href="index.html">NetOps Journal</a>
+                    <span class="nav-logo-tagline">Where networking meets automation.</span>
+                </div>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link">Categories</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="index.html#all">All</a></li>
+                        <li><a href="index.html#kubernetes">Kubernetes</a></li>
+                        <li><a href="index.html#automation">Automation</a></li>
+                        <li><a href="index.html#opensource">Open-source</a></li>
+                        <li><a href="index.html#cisco">Cisco Technologies</a></li>
+                        <li><a href="index.html#juniper">Juniper Technologies</a></li>
+                        <li><a href="index.html#homeautomation">Home-Automation</a></li>
+                        <li><a href="index.html#homelab">Home-Lab</a></li>
+                        <li><a href="index.html#certifications">Certifications</a></li>
+                        <li><a href="index.html#projects">Projects</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="index.html" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="projects.html" class="nav-link">Projects</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="about.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Skip to content -->
+    <a href="#main-content" class="skip-link">Skip to content</a>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <span class="theme-toggle-icon">🎨</span>
+        <span class="theme-toggle-text">Change Theme</span>
+    </button>
+
+    <!-- Hero Section -->
+    <section class="hero" style="padding: 100px 0 60px;">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title-big">🤖 Automating My Juniper Switch with Ansible</h1>
+                <p class="hero-subtitle">Network Automation • Configuration Management • Infrastructure as Code</p>
+                <p class="hero-description">From manual configuration to automated deployment - my journey learning Ansible for Juniper network automation</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main id="main-content" class="blog-post">
+        <div class="container">
+            <article class="blog-content">
+                <p class="lead">So after getting my Juniper EX4300 configured manually, I figured I should probably automate this stuff. Got my CCNA and always heard about Ansible but never really messed with it. Time to change that.</p>
+
+                <p>This is basically my notes on setting up Ansible to manage Juniper gear. Nothing fancy, just what worked for me.</p>
+
+                <!-- Proof Sections with Images -->
+                <div class="proof-section">
+                    <h3>✅ 1. Prove Connectivity and Collection is Working</h3>
+                    <p>This uses the basic ping module to confirm Ansible can log in to your device using the credentials in your inventory, and that the connection type (netconf) is working.</p>
+                    
+                    <table class="command-table">
+                        <thead>
+                            <tr>
+                                <th>Command to Run</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>ansible juniper_switches -i inventory/hosts.yml -m ping</code></td>
+                                <td>Confirms SSH/NETCONF login is successful.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <img src="images/juniper dashboard + ansible.png" alt="Ansible Connectivity Test - Successful Ping to Juniper Switch" class="proof-image">
+                </div>
+
+                <div class="proof-section">
+                    <h3>✅ 2. Run an Operational Command</h3>
+                    <p>This shows you can execute a specific Junos operational command on the switch, proving you can retrieve real-time data using the <code>junipernetworks.junos.junos_command</code> module.</p>
+                    
+                    <table class="command-table">
+                        <thead>
+                            <tr>
+                                <th>Command to Run</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>ansible juniper_switches -i inventory/hosts.yml -m junipernetworks.junos.junos_command -a "commands='show version'"</code></td>
+                                <td>Demonstrates live data retrieval from the device.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <img src="images/junipernetworks.png" alt="Juniper Show Version Command via Ansible" class="proof-image">
+                </div>
+
+                <div class="proof-section">
+                    <h3>✅ 3. Run the Automated Backup Playbook</h3>
+                    <p>This is the most important demonstration of your work. It proves the playbook logic, file system permissions, and variable usage are correct. Since you documented using Vault, add the secure flag.</p>
+                    
+                    <table class="command-table">
+                        <thead>
+                            <tr>
+                                <th>Command to Run</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>ansible-playbook -i inventory/hosts.yml playbooks/backup_config.yml --ask-vault-pass</code></td>
+                                <td>Executes the multi-step backup process using the secure Vault password.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <img src="images/playbook backlup.png" alt="Ansible Playbook Backup Execution - Successful Configuration Backup" class="proof-image">
+                </div>
+
+                <hr>
+
+                <h2>Why Bother with Ansible?</h2>
+
+                <p>Look, typing the same commands over and over gets old fast. Plus if I add more switches later, I don't want to configure each one manually. Ansible lets you:</p>
+
+                <ul>
+                    <li>Push configs to multiple switches at once</li>
+                    <li>Backup configs automatically</li>
+                    <li>Roll back if you mess up</li>
+                    <li>Actually document what you're doing</li>
+                </ul>
+
+                <p>Coming from Cisco, I know this stuff matters. Might as well learn it now.</p>
+
+                <hr>
+
+                <h2>What You Need</h2>
+
+                <p><strong>Software:</strong></p>
+                <ul>
+                    <li>Linux (I'm using WSL on Windows)</li>
+                    <li>Ansible</li>
+                    <li>Python 3</li>
+                    <li>Juniper Ansible collection</li>
+                </ul>
+
+                <p><strong>On the Switch:</strong></p>
+                <ul>
+                    <li>SSH enabled (already done)</li>
+                    <li>NETCONF enabled (comes with SSH on Junos)</li>
+                    <li>A user account with permissions</li>
+                </ul>
+
+                <p>That's it. Pretty straightforward.</p>
+
+                <hr>
+
+                <h2>Step 1: Installing Ansible</h2>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">bash</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-bash"># Update packages
+sudo apt update
+
+# Install Ansible
+sudo apt install ansible -y
+
+# Verify it worked
+ansible --version</code></pre>
+                </div>
+
+                <p>You should see something like "ansible 2.x.x" - exact version doesn't matter much.</p>
+
+                <hr>
+
+                <h2>Step 2: Install Juniper Collection</h2>
+
+                <p>Ansible needs Juniper-specific modules to talk to JunOS devices.</p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">bash</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-bash">ansible-galaxy collection install junipernetworks.junos</code></pre>
+                </div>
+
+                <p>This downloads all the Juniper stuff you need. Takes a minute.</p>
+
+                <hr>
+
+                <h2>Step 3: Project Structure</h2>
+
+                <p>I created a folder called <code>JUNOS</code> to keep everything organized. Here's the structure:</p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">Project Structure</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code>JUNOS/
+├── ansible.cfg              # Ansible settings
+├── inventory/
+│   └── hosts.yml           # List of switches
+├── group_vars/
+│   └── juniper_switches.yml # Common variables
+├── playbooks/
+│   ├── backup_config.yml   # Backup playbook
+│   ├── deploy_vlans.yml    # VLAN deployment
+│   └── check_status.yml    # Status check
+├── backups/                # Where backups go
+└── templates/              # For future templates</code></pre>
+                </div>
+
+                <p>Create it all at once:</p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">bash</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-bash">mkdir -p ~/JUNOS/{inventory,playbooks,group_vars,backups,templates}
+cd ~/JUNOS</code></pre>
+                </div>
+
+                <hr>
+
+                <h2>Step 4: Ansible Configuration</h2>
+
+                <p><strong>File: <code>ansible.cfg</code></strong></p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">ansible.cfg</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-ini">[defaults]
+inventory = ./inventory/hosts.yml
+host_key_checking = False
+log_path = ./ansible.log
+stdout_callback = yaml
+timeout = 30
+
+[inventory]
+enable_plugins = yaml</code></pre>
+                </div>
+
+                <p>This tells Ansible:</p>
+                <ul>
+                    <li>Where to find your switches</li>
+                    <li>Don't bug me about SSH keys</li>
+                    <li>Log everything</li>
+                    <li>Use YAML output (easier to read)</li>
+                </ul>
+
+                <hr>
+
+                <h2>Step 5: Define Your Switches</h2>
+
+                <p><strong>File: <code>inventory/hosts.yml</code></strong></p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">inventory/hosts.yml</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-yaml">---
+all:
+  children:
+    juniper_switches:
+      hosts:
+        YYY-SWITCH-01:
+          ansible_host: XXX.XXX.XXX.XXX
+          ansible_network_os: junipernetworks.junos.junos
+          ansible_connection: netconf
+          ansible_user: YYY-ADMIN
+          ansible_ssh_pass: YOUR-PASSWORD-HERE
+          
+      vars:
+        ansible_python_interpreter: /usr/bin/python3</code></pre>
+                </div>
+
+                <p><strong>What each line means:</strong></p>
+                <ul>
+                    <li><code>YYY-SWITCH-01</code> - Your switch's name (anything you want)</li>
+                    <li><code>ansible_host</code> - Switch's IP address</li>
+                    <li><code>ansible_network_os</code> - Tells Ansible this is Juniper</li>
+                    <li><code>ansible_connection: netconf</code> - Use NETCONF (better than raw SSH)</li>
+                    <li><code>ansible_user</code> / <code>ansible_ssh_pass</code> - Login credentials</li>
+                </ul>
+
+                <p><strong>Security note:</strong> Yeah, password in plain text sucks. We'll encrypt it later with Ansible Vault. For now, just get it working.</p>
+
+                <hr>
+
+                <h2>Step 6: Common Variables</h2>
+
+                <p><strong>File: <code>group_vars/juniper_switches.yml</code></strong></p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">group_vars/juniper_switches.yml</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-yaml">---
+# VLANs configuration
+vlans:
+  - name: DATA
+    vlan_id: 10
+    description: "User Data VLAN"
+    ip_address: XXX.XXX.10.1/24
+  
+  - name: VOICE
+    vlan_id: 20
+    description: "VoIP VLAN"
+    ip_address: XXX.XXX.20.1/24
+  
+  - name: GUEST
+    vlan_id: 30
+    description: "Guest Network"
+    ip_address: XXX.XXX.30.1/24
+
+# Network settings
+dhcp_server: XXX.XXX.XXX.XXX
+dns_servers:
+  - XXX.XXX.XXX.XXX
+  - XXX.XXX.XXX.XXX
+ntp_servers:
+  - 0.pool.ntp.org
+  - 1.pool.ntp.org
+snmp_community: YOUR-COMMUNITY-HERE
+timezone: America/New_York
+domain_name: YYY.local</code></pre>
+                </div>
+
+                <p>This is where all your network settings live. Change something here, deploy everywhere. Pretty slick.</p>
+
+                <hr>
+
+                <h2>Step 7: Your First Playbook - Backup</h2>
+
+                <p><strong>File: <code>playbooks/backup_config.yml</code></strong></p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">playbooks/backup_config.yml</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-yaml">---
+- name: Backup Juniper Switch Configuration
+  hosts: juniper_switches
+  gather_facts: no
+  
+  tasks:
+    - name: Get current configuration
+      junipernetworks.junos.junos_command:
+        commands:
+          - show configuration | display set
+      register: config_output
+    
+    - name: Save configuration to file
+      copy:
+        content: "{{ config_output.stdout[0] }}"
+        dest: "./backups/{{ inventory_hostname }}_config_{{ ansible_date_time.date }}.txt"
+      delegate_to: localhost
+    
+    - name: Show backup location
+      debug:
+        msg: "Configuration backed up to ./backups/{{ inventory_hostname }}_config_{{ ansible_date_time.date }}.txt"</code></pre>
+                </div>
+
+                <p><strong>What this does:</strong></p>
+                <ol>
+                    <li>Connects to your switch</li>
+                    <li>Runs "show configuration | display set"</li>
+                    <li>Saves it to a file with today's date</li>
+                    <li>Tells you where it saved it</li>
+                </ol>
+
+                <p>Simple, clean, automated.</p>
+
+                <hr>
+
+                <h2>Step 8: Install Python Dependencies</h2>
+
+                <p>Before running playbooks, you need some Python libraries:</p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">bash</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-bash"># Install via apt (recommended)
+sudo apt install python3-ncclient python3-paramiko python3-lxml -y
+
+# OR via pip if you prefer
+pip3 install ncclient paramiko lxml --break-system-packages</code></pre>
+                </div>
+
+                <p>The <code>ncclient</code> library is what lets Ansible talk NETCONF to Juniper switches.</p>
+
+                <hr>
+
+                <h2>Step 9: Test Connection</h2>
+
+                <p>Before running playbooks, test if Ansible can reach your switch:</p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">bash</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-bash">ansible juniper_switches -i inventory/hosts.yml -m ping</code></pre>
+                </div>
+
+                <p>If it works, you'll see:</p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">Output</span>
+                    </div>
+                    <pre><code>YYY-SWITCH-01 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}</code></pre>
+                </div>
+
+                <p>If you get "pong" - you're golden.</p>
+
+                <hr>
+
+                <h2>Step 10: Run Your First Backup</h2>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">bash</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-bash">ansible-playbook -i inventory/hosts.yml playbooks/backup_config.yml</code></pre>
+                </div>
+
+                <p>You should see:</p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">Output</span>
+                    </div>
+                    <pre><code>PLAY [Backup Juniper Switch Configuration]
+
+TASK [Get current configuration]
+ok: [YYY-SWITCH-01]
+
+TASK [Save configuration to file]
+changed: [YYY-SWITCH-01]
+
+TASK [Show backup location]
+ok: [YYY-SWITCH-01]
+
+PLAY RECAP
+YYY-SWITCH-01    : ok=3    changed=1    unreachable=0    failed=0</code></pre>
+                </div>
+
+                <p>Check your backups folder:</p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">bash</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-bash">ls backups/
+cat backups/YYY-SWITCH-01_config_2025-11-30.txt</code></pre>
+                </div>
+
+                <p>Your entire switch config should be there!</p>
+
+                <hr>
+
+                <h2>VLAN Deployment Playbook</h2>
+
+                <p><strong>File: <code>playbooks/deploy_vlans.yml</code></strong></p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">playbooks/deploy_vlans.yml</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-yaml">---
+- name: Deploy VLANs to Juniper Switch
+  hosts: juniper_switches
+  gather_facts: no
+  
+  tasks:
+    - name: Create VLANs
+      junipernetworks.junos.junos_vlans:
+        config:
+          - name: "{{ item.name }}"
+            vlan_id: "{{ item.vlan_id }}"
+        state: merged
+      loop: "{{ vlans }}"
+    
+    - name: Configure VLAN L3 Interfaces
+      junipernetworks.junos.junos_config:
+        lines:
+          - "set vlans {{ item.name }} l3-interface irb.{{ item.vlan_id }}"
+          - "set interfaces irb unit {{ item.vlan_id }} family inet address {{ item.ip_address }}"
+      loop: "{{ vlans }}"
+    
+    - name: Commit configuration
+      junipernetworks.junos.junos_config:
+        comment: "Ansible VLAN deployment"</code></pre>
+                </div>
+
+                <p>This reads your VLANs from <code>group_vars</code> and deploys them automatically. Add a VLAN to the vars file, run the playbook, done.</p>
+
+                <hr>
+
+                <h2>Status Check Playbook</h2>
+
+                <p><strong>File: <code>playbooks/check_status.yml</code></strong></p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">playbooks/check_status.yml</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-yaml">---
+- name: Check Juniper Switch Status
+  hosts: juniper_switches
+  gather_facts: no
+  
+  tasks:
+    - name: Get system information
+      junipernetworks.junos.junos_command:
+        commands:
+          - show version
+          - show system uptime
+          - show chassis alarms
+      register: system_info
+    
+    - name: Get VLAN information
+      junipernetworks.junos.junos_command:
+        commands:
+          - show vlans
+      register: vlan_info
+    
+    - name: Display results
+      debug:
+        msg: "{{ system_info.stdout_lines }}"</code></pre>
+                </div>
+
+                <p>Run this anytime you want to check on your switch without SSH'ing in.</p>
+
+                <hr>
+
+                <h2>Securing Passwords with Ansible Vault</h2>
+
+                <p>Okay, passwords in plain text is bad. Let's fix it.</p>
+
+                <p><strong>Encrypt your inventory:</strong></p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">bash</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-bash">ansible-vault encrypt inventory/hosts.yml</code></pre>
+                </div>
+
+                <p>Pick a vault password and remember it.</p>
+
+                <p><strong>To edit later:</strong></p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">bash</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-bash">ansible-vault edit inventory/hosts.yml</code></pre>
+                </div>
+
+                <p><strong>Run playbooks with vault:</strong></p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">bash</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-bash">ansible-playbook -i inventory/hosts.yml playbooks/backup_config.yml --ask-vault-pass</code></pre>
+                </div>
+
+                <p>Now your passwords are encrypted. Much better.</p>
+
+                <hr>
+
+                <h2>Daily Usage</h2>
+
+                <p><strong>Morning routine - backup everything:</strong></p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">bash</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-bash">ansible-playbook -i inventory/hosts.yml playbooks/backup_config.yml</code></pre>
+                </div>
+
+                <p><strong>Check if everything's up:</strong></p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">bash</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-bash">ansible-playbook -i inventory/hosts.yml playbooks/check_status.yml</code></pre>
+                </div>
+
+                <p><strong>Deploy config changes:</strong></p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">bash</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-bash"># Edit group_vars/juniper_switches.yml
+# Add your changes
+ansible-playbook -i inventory/hosts.yml playbooks/deploy_vlans.yml</code></pre>
+                </div>
+
+                <p><strong>Got multiple switches?</strong> Just add them to <code>inventory/hosts.yml</code> and Ansible will configure ALL of them with one command. That's the power of automation.</p>
+
+                <hr>
+
+                <h2>Troubleshooting</h2>
+
+                <p><strong>"Module not found" error:</strong></p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">bash</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-bash">ansible-galaxy collection install junipernetworks.junos --force</code></pre>
+                </div>
+
+                <p><strong>"Connection timeout":</strong></p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">bash</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-bash"># Check if switch is reachable
+ping XXX.XXX.XXX.XXX
+
+# Verify NETCONF is enabled
+ssh your-user@XXX.XXX.XXX.XXX
+show system services</code></pre>
+                </div>
+
+                <p><strong>"Permission denied":</strong></p>
+                <ul>
+                    <li>Check username/password in inventory</li>
+                    <li>Verify user has superuser access on switch</li>
+                </ul>
+
+                <p><strong>"ncclient not found":</strong></p>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">bash</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-bash">sudo apt install python3-ncclient -y</code></pre>
+                </div>
+
+                <hr>
+
+                <h2>What I Learned</h2>
+
+                <p>Coming from CCNA and Cisco gear, Ansible on Juniper is actually pretty smooth. The NETCONF connection is way cleaner than screen-scraping Cisco IOS.</p>
+
+                <p>Biggest differences from Cisco automation:</p>
+                <ul>
+                    <li>Juniper uses NETCONF by default (no need for <code>enable</code> and all that)</li>
+                    <li>Config is always in "set" format (consistent, predictable)</li>
+                    <li>Commit model means you can stage changes without breaking stuff</li>
+                    <li>Rollback is built into the OS, not just Ansible</li>
+                </ul>
+
+                <p>The playbook structure is the same regardless of vendor - you just use different modules. Makes sense once you wrap your head around it.</p>
+
+                <hr>
+
+                <h2>Next Steps</h2>
+
+                <p>Things I want to add:</p>
+                <ul>
+                    <li>Scheduled backups (cron job running the backup playbook)</li>
+                    <li>Config drift detection (compare running config vs intended config)</li>
+                    <li>Port configuration playbook</li>
+                    <li>User management playbook</li>
+                    <li>Maybe integrate with Git for version control</li>
+                </ul>
+
+                <p>For now though, I can backup configs and deploy VLANs automatically. Good enough to get started.</p>
+
+                <hr>
+
+                <h2>Useful Commands</h2>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">Quick Reference</span>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <span>📋 Copy</span>
+                        </button>
+                    </div>
+                    <pre><code class="language-bash"># Test connection
+ansible juniper_switches -i inventory/hosts.yml -m ping
+
+# Run a single command
+ansible juniper_switches -i inventory/hosts.yml -m junipernetworks.junos.junos_command -a "commands='show version'"
+
+# Backup configs
+ansible-playbook -i inventory/hosts.yml playbooks/backup_config.yml
+
+# Deploy VLANs
+ansible-playbook -i inventory/hosts.yml playbooks/deploy_vlans.yml
+
+# Check status
+ansible-playbook -i inventory/hosts.yml playbooks/check_status.yml
+
+# Edit encrypted files
+ansible-vault edit inventory/hosts.yml
+
+# Verbose output (for debugging)
+ansible-playbook -i inventory/hosts.yml playbooks/backup_config.yml -vvv</code></pre>
+                </div>
+
+                <hr>
+
+                <h2>Final Thoughts</h2>
+
+                <p>Ansible isn't as complicated as I thought it'd be. The hardest part was just figuring out the folder structure and where everything goes. Once you have a working example, you can just modify it for whatever you need.</p>
+
+                <p>The YAML syntax takes some getting used to - indentation matters a LOT. Two spaces, not tabs. Mess that up and nothing works.</p>
+
+                <p>But overall? Pretty solid tool. Way better than manually configuring stuff, especially when you're dealing with multiple devices.</p>
+
+                <p>Glad I took the time to set this up. Should make studying for JNCIA easier too since automation is part of that exam.</p>
+
+                <hr>
+
+                <h2>Project Structure Recap</h2>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-title">Final Structure</span>
+                    </div>
+                    <pre><code>JUNOS/
+├── ansible.cfg
+├── inventory/hosts.yml (encrypted)
+├── group_vars/juniper_switches.yml
+├── playbooks/
+│   ├── backup_config.yml
+│   ├── deploy_vlans.yml
+│   └── check_status.yml
+└── backups/</code></pre>
+                </div>
+
+                <p>Clean, organized, automated. That's the goal.</p>
+
+                <div style="margin-top: 3rem; padding: 2rem; background: var(--bg-secondary); border-left: 4px solid var(--primary-color); border-radius: 8px;">
+                    <p style="margin: 0; font-style: italic; color: var(--text-secondary);">-Ahmed</p>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="imprint.html">Imprint</a>
+            </div>
+            <div class="footer-copyright">
+                <p>Copyright © Ahmed 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.closest('.terminal').querySelector('code');
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalContent = button.innerHTML;
+                button.innerHTML = '<span>✅ Copied!</span>';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalContent;
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
+
