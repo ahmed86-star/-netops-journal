@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>macOS Forensics Lab | NetOps Journal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        .blog-post {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        .blog-post h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            text-shadow: var(--glow-primary);
+            text-align: center;
+        }
+        .blog-post h2 {
+            font-size: 2rem;
+            margin: 3rem 0 1.5rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        .blog-post h3 {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+        .blog-post h4 {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--text-secondary);
+        }
+        .blog-post p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+        .blog-post strong {
+            color: var(--primary-color);
+        }
+        .blog-post ul, .blog-post ol {
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+            color: var(--text-secondary);
+        }
+        .blog-post li {
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+        .blog-post pre {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            display: block;
+            margin: 1.5rem 0;
+        }
+        .blog-post code {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+        }
+        .blog-post pre code {
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+        .lab-access {
+            background: var(--bg-card);
+            border-left: 4px solid var(--accent-color);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+        .lab-access a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .lab-access a:hover {
+            text-decoration: underline;
+        }
+        .question-box {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+        .question-box h4 {
+            color: var(--accent-color);
+            margin-top: 0;
+        }
+        .answer-box {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 4px;
+        }
+        .answer-box strong {
+            color: var(--primary-color);
+        }
+        .info-box {
+            background: var(--bg-card);
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/netops.jpg" alt="NetOps Journal Logo" class="nav-logo-img">
+                <div class="nav-logo-text">
+                    <a href="index.html">NetOps Journal</a>
+                    <span class="nav-logo-tagline">Where networking meets automation.</span>
+                </div>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link">Categories</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="index.html#all">All</a></li>
+                        <li><a href="index.html#kubernetes">Kubernetes</a></li>
+                        <li><a href="index.html#automation">Automation</a></li>
+                        <li><a href="index.html#opensource">Open-source</a></li>
+                        <li><a href="index.html#cisco">Cisco Technologies</a></li>
+                        <li><a href="index.html#juniper">Juniper Technologies</a></li>
+                        <li><a href="index.html#homeautomation">Home-Automation</a></li>
+                        <li><a href="index.html#homelab">Home-Lab</a></li>
+                        <li><a href="index.html#certifications">Certifications</a></li>
+                        <li><a href="index.html#projects">Projects</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="index.html" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="projects.html" class="nav-link">Projects</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="about.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Theme Toggle Button -->
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+        <span class="theme-toggle-icon">🎨</span>
+        <span class="theme-toggle-text">Change Theme</span>
+    </button>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+        <article class="blog-post">
+            <h1>🍎 macOS Forensics: Artefacts Lab</h1>
+
+            <div class="lab-access">
+                <p><strong>🎯 Lab Access:</strong> <a href="https://tryhackme.com/room/macosforensicsartefacts" target="_blank" rel="noopener noreferrer">https://tryhackme.com/room/macosforensicsartefacts</a></p>
+            </div>
+
+            <h2>📌 Introduction</h2>
+            <p>In the <strong>macOS Forensics: The Basics</strong> room, we learned the fundamentals of macOS forensics and some of the challenges we might encounter when performing forensics on macOS systems. Now that we have that foundation, we need to discover what forensic artifacts exist in macOS and how we can leverage them during our investigations.</p>
+
+            <p>This lab explores various macOS artifacts including system information, network activity, user accounts, evidence of execution, file system activity, and connected devices.</p>
+
+            <h2>🎯 Task 1: Introduction</h2>
+
+            <div class="question-box">
+                <h4>What command can be used to mount the image named mac-disk.img to the directory ~/mac in the attached VM, making sure the Data volume is mounted?</h4>
+                
+                <p>To mount an APFS disk image and ensure the Data volume is accessible, we need to use the <code>apfs-fuse</code> utility with the correct verbosity level.</p>
+
+                <div class="answer-box">
+                    <strong>Answer:</strong> <code>apfs-fuse -v 4 mac-disk.img ~/mac</code>
+                </div>
+            </div>
+
+            <h2>🔧 Task 2: Before We Begin</h2>
+
+            <p>Before diving into the forensic analysis, we need to familiarize ourselves with the tools available in the attached VM for parsing macOS-specific file formats.</p>
+
+            <div class="question-box">
+                <h4>In the attached VM, which utility can we use to parse plist files?</h4>
+                
+                <p>Property List (plist) files are used extensively in macOS to store configuration and settings. We need a utility to read and parse these files in a human-readable format.</p>
+
+                <div class="answer-box">
+                    <strong>Answer:</strong> <code>plistutil</code>
+                </div>
+            </div>
+
+            <h2>💻 Task 3: System Information</h2>
+
+            <p>System information artifacts can tell us when the OS was installed, system configuration, and boot history. This information is crucial for establishing a timeline and understanding the system's state.</p>
+
+            <div class="question-box">
+                <h4>When was the OS installed on the disk image present in the attached VM?</h4>
+                <p><strong>Format:</strong> YYYY-MM-DD hh:mm:ss (GMT)</p>
+                
+                <div class="answer-box">
+                    <strong>Answer:</strong> 2024-12-08 17:42:28
+                </div>
+            </div>
+
+            <div class="question-box">
+                <h4>What is the country code for this machine?</h4>
+                
+                <div class="answer-box">
+                    <strong>Answer:</strong> AE
+                </div>
+            </div>
+
+            <div class="question-box">
+                <h4>When was the last time this machine booted up?</h4>
+                <p><strong>Format:</strong> YYYY-MM-DD hh:mm:ss (GMT)</p>
+                
+                <div class="answer-box">
+                    <strong>Answer:</strong> 2025-01-19 15:47:05
+                </div>
+            </div>
+
+            <h2>🌐 Task 4: Network Information</h2>
+
+            <p>Network artifacts provide valuable information about network interfaces, connections, and routing configurations. This can help identify what networks the machine was connected to and its network configuration.</p>
+
+            <div class="question-box">
+                <h4>What is the name of the machine's built-in network interface?</h4>
+                
+                <div class="answer-box">
+                    <strong>Answer:</strong> en0
+                </div>
+            </div>
+
+            <div class="question-box">
+                <h4>What is the IP address of the router this machine was last connected to?</h4>
+                
+                <div class="answer-box">
+                    <strong>Answer:</strong> 192.168.64.1
+                </div>
+            </div>
+
+            <h2>👤 Task 5: Account Activity</h2>
+
+            <p>User account information is critical in forensic investigations. It helps identify who was using the system, when they logged in, and potentially their authentication details.</p>
+
+            <div class="question-box">
+                <h4>What is the name of the last logged in user?</h4>
+                
+                <div class="answer-box">
+                    <strong>Answer:</strong> thm
+                </div>
+            </div>
+
+            <div class="question-box">
+                <h4>What is the password hint for the user?</h4>
+                
+                <div class="answer-box">
+                    <strong>Answer:</strong> count to 5
+                </div>
+            </div>
+
+            <div class="question-box">
+                <h4>When was the last time a user logged out of the machine?</h4>
+                <p><strong>Format:</strong> MMM DD hh:mm:ss</p>
+                
+                <div class="answer-box">
+                    <strong>Answer:</strong> Jan 19 07:52:43
+                </div>
+            </div>
+
+            <h2>⚙️ Task 6: Evidence of Execution</h2>
+
+            <p>Evidence of execution artifacts show what programs were run, what commands were executed, and when. This is crucial for understanding user activity and potential malicious actions.</p>
+
+            <div class="question-box">
+                <h4>What was the last command executed by the user on the machine?</h4>
+                
+                <div class="answer-box">
+                    <strong>Answer:</strong> <code>vim creds.txt</code>
+                </div>
+            </div>
+
+            <div class="question-box">
+                <h4>What is the GUID of the terminal session in which this command was executed?</h4>
+                
+                <div class="answer-box">
+                    <strong>Answer:</strong> 452AEA93-AEE7-420B-871E-C57053E15DD0
+                </div>
+            </div>
+
+            <div class="question-box">
+                <h4>When was the last time the user closed the terminal?</h4>
+                <p><strong>Format:</strong> YYYY-MM-DD hh:mm:ss</p>
+                
+                <div class="answer-box">
+                    <strong>Answer:</strong> 2025-01-19 15:52:33
+                </div>
+            </div>
+
+            <div class="question-box">
+                <h4>For how many seconds was the terminal in focus during this session?</h4>
+                
+                <div class="answer-box">
+                    <strong>Answer:</strong> 176
+                </div>
+            </div>
+
+            <h2>📁 Task 7: File System Activity</h2>
+
+            <p>File system artifacts reveal what files and folders were accessed, how they were viewed, and user preferences for file organization. The Finder application leaves many traces of user interaction with the file system.</p>
+
+            <div class="question-box">
+                <h4>What are the viewing options for the Users/thm folder?</h4>
+                
+                <div class="answer-box">
+                    <strong>Answer:</strong> Open in list view
+                </div>
+            </div>
+
+            <div class="question-box">
+                <h4>What is the last directory visited by the user using the Finder application?</h4>
+                
+                <div class="answer-box">
+                    <strong>Answer:</strong> Recents
+                </div>
+            </div>
+
+            <h2>🔌 Task 8: Connected Devices</h2>
+
+            <p>The knowledgeC database in macOS stores information about device usage, including connected Bluetooth devices, screen time, and application usage. This database is a goldmine for forensic investigators.</p>
+
+            <div class="question-box">
+                <h4>Which stream in the knowledgeC database contains information about connected Bluetooth devices?</h4>
+                
+                <div class="answer-box">
+                    <strong>Answer:</strong> Bluetooth/isConnected
+                </div>
+            </div>
+
+            <h2>🎓 Task 9: Conclusion</h2>
+
+            <p>Yoohoo! I loved exploring macOS Forensics!</p>
+
+            <div class="info-box">
+                <h3 style="color: var(--primary-color); margin-top: 0;">🎉 Lab Complete!</h3>
+                <p>Congratulations on completing the macOS Forensics: Artefacts lab! You've learned how to:</p>
+                <ul>
+                    <li>Mount and analyze macOS disk images</li>
+                    <li>Parse plist files for configuration data</li>
+                    <li>Extract system information and boot history</li>
+                    <li>Analyze network artifacts and connections</li>
+                    <li>Investigate user account activity and authentication</li>
+                    <li>Find evidence of program execution and command history</li>
+                    <li>Examine file system activity through Finder artifacts</li>
+                    <li>Query the knowledgeC database for device information</li>
+                </ul>
+                <p style="margin-top: 1.5rem;">These skills form a solid foundation for conducting forensic investigations on macOS systems. Continue practicing with real-world scenarios to master macOS forensics!</p>
+            </div>
+
+            <div style="margin-top: 3rem; padding: 1.5rem; background: var(--bg-card); border-radius: 8px; text-align: center;">
+                <a href="labs.html" class="btn btn-primary" style="margin-right: 1rem;">← Back to Labs</a>
+                <a href="https://tryhackme.com/room/macosforensicsartefacts" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Try the Lab Yourself →</a>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="imprint.html">Imprint</a>
+            </div>
+            <div class="footer-copyright">
+                <p>Copyright © Ahmed 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
