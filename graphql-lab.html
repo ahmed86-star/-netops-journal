@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraphQL Security Lab | NetOps Journal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        .blog-post {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        .blog-post h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            text-shadow: var(--glow-primary);
+            text-align: center;
+        }
+        .blog-post h2 {
+            font-size: 2rem;
+            margin: 3rem 0 1.5rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        .blog-post h3 {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+        .blog-post h4 {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--text-secondary);
+        }
+        .blog-post p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+        .blog-post strong {
+            color: var(--primary-color);
+        }
+        .blog-post ul, .blog-post ol {
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+            color: var(--text-secondary);
+        }
+        .blog-post li {
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+        .blog-post pre {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            display: block;
+            margin: 1.5rem 0;
+        }
+        .blog-post code {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+        }
+        .blog-post pre code {
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+        .lab-note {
+            background: var(--bg-card);
+            border-left: 4px solid var(--accent-color);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+        .question-box {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+        .question-box h4 {
+            color: var(--accent-color);
+            margin-top: 0;
+        }
+        .answer-box {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 4px;
+        }
+        .answer-box strong {
+            color: var(--primary-color);
+        }
+        .step-box {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+            border-left: 3px solid var(--accent-color);
+        }
+        .step-box strong {
+            color: var(--accent-color);
+        }
+        .info-box {
+            background: var(--bg-card);
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/netops.jpg" alt="NetOps Journal Logo" class="nav-logo-img">
+                <div class="nav-logo-text">
+                    <a href="index.html">NetOps Journal</a>
+                    <span class="nav-logo-tagline">Where networking meets automation.</span>
+                </div>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link">Categories</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="index.html#all">All</a></li>
+                        <li><a href="index.html#kubernetes">Kubernetes</a></li>
+                        <li><a href="index.html#automation">Automation</a></li>
+                        <li><a href="index.html#opensource">Open-source</a></li>
+                        <li><a href="index.html#cisco">Cisco Technologies</a></li>
+                        <li><a href="index.html#juniper">Juniper Technologies</a></li>
+                        <li><a href="index.html#homeautomation">Home-Automation</a></li>
+                        <li><a href="index.html#homelab">Home-Lab</a></li>
+                        <li><a href="index.html#certifications">Certifications</a></li>
+                        <li><a href="index.html#projects">Projects</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="index.html" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="projects.html" class="nav-link">Projects</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="about.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Theme Toggle Button -->
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+        <span class="theme-toggle-icon">🎨</span>
+        <span class="theme-toggle-text">Change Theme</span>
+    </button>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+        <article class="blog-post">
+            <h1>🔒 GraphQL Security Lab - Complete Walkthrough</h1>
+
+            <div class="lab-note">
+                <p><strong>Note:</strong> This article contains the answers and step-by-step solutions if you're struggling with the lab. This is also my first medium article, so bear with any flaws you may find.</p>
+            </div>
+
+            <h2>📌 Introduction</h2>
+            <p>GraphQL is a powerful query language for APIs that allows clients to request exactly the data they need. However, like any technology, it comes with its own security considerations. In this lab, we'll explore common GraphQL vulnerabilities including introspection abuse and SQL injection attacks.</p>
+
+            <h2>🎯 Lab Sections Overview</h2>
+
+            <h3>1: Introduction</h3>
+            <p>No answer needed - Introduction to GraphQL security concepts.</p>
+
+            <h3>2: Introduction</h3>
+            <p>No answer needed - Additional context and setup information.</p>
+
+            <h3>3: End Points</h3>
+            <p>No answer needed - Understanding GraphQL endpoints.</p>
+
+            <h3>4: Common Vulnerabilities</h3>
+            <p>No answer needed - Overview of typical GraphQL security issues.</p>
+
+            <h2>🔍 5: Introspection</h2>
+
+            <p>First, let's understand what <strong>GraphQL introspection</strong> is:</p>
+
+            <div class="info-box">
+                <p>Introspection is a feature that allows clients to query the schema itself. This means you can retrieve detailed information about all the types, fields, and relationships defined in the API. Introspection is an incredibly useful tool for developers because it enables them to explore an API's capabilities without needing external documentation.</p>
+            </div>
+
+            <div class="question-box">
+                <h4>Question 1: What is the missing query?</h4>
+                <p>There are two queries after the introspection, namely User, and XXXX. What is the missing query?</p>
+
+                <div class="step-box">
+                    <p><strong>Step 1:</strong> Capture the Login request with Burp Suite or check the "HTTP History" in Burp Suite.</p>
+                </div>
+
+                <div class="step-box">
+                    <p><strong>Step 2:</strong> Send the request to Repeater.</p>
+                </div>
+
+                <div class="step-box">
+                    <p><strong>Step 3:</strong> Change the query to the following introspection query:</p>
+                    <pre><code>{
+  "query": "query IntrospectionQuery { 
+    __schema { 
+      queryType { name } 
+      mutationType { name } 
+      subscriptionType { name } 
+      types { 
+        ...FullType 
+      } 
+      directives { 
+        name 
+        description 
+        args { 
+          ...InputValue 
+        } 
+        locations 
+      } 
+    } 
+  } 
+  
+  fragment FullType on __Type { 
+    kind 
+    name 
+    description 
+    fields(includeDeprecated: true) { 
+      name 
+      description 
+      args { 
+        ...InputValue 
+      } 
+      type { 
+        ...TypeRef 
+      } 
+      isDeprecated 
+      deprecationReason 
+    } 
+    inputFields { 
+      ...InputValue 
+    } 
+    interfaces { 
+      ...TypeRef 
+    } 
+    enumValues(includeDeprecated: true) { 
+      name 
+      description 
+      isDeprecated 
+      deprecationReason 
+    } 
+    possibleTypes { 
+      ...TypeRef 
+    } 
+  } 
+  
+  fragment InputValue on __InputValue { 
+    name 
+    description 
+    type { 
+      ...TypeRef 
+    } 
+    defaultValue 
+  } 
+  
+  fragment TypeRef on __Type { 
+    kind 
+    name 
+    ofType { 
+      kind 
+      name 
+      ofType { 
+        kind 
+        name 
+        ofType { 
+          kind 
+          name 
+        } 
+      } 
+    } 
+  }"
+}</code></pre>
+                </div>
+
+                <div class="step-box">
+                    <p><strong>Step 4:</strong> Send the request and the application response contains the entire web application schema.</p>
+                </div>
+
+                <div class="step-box">
+                    <p><strong>Step 5:</strong> Visit <a href="http://graphql-kit.com/graphql-voyager/" target="_blank" rel="noopener noreferrer" style="color: var(--accent-color);">http://graphql-kit.com/graphql-voyager/</a></p>
+                    <p><strong>Important:</strong> Be sure to remove the HTTPS header.</p>
+                    <p>Follow the visualization steps to see the schema structure.</p>
+                </div>
+
+                <div class="answer-box">
+                    <strong>ANSWER:</strong> POST
+                </div>
+            </div>
+
+            <div class="question-box">
+                <h4>Question 2: Challenge! What is Bob's email?</h4>
+                <p>Since you're able to disclose the column names, what is the email of the user named bob?</p>
+
+                <p>This is a challenge - an easy one!</p>
+
+                <div class="step-box">
+                    <p>Take the request you captured in Question 1 and change the query to:</p>
+                    <pre><code>{
+  "query": "\n query ($username: String!) {\n users(username: $username) {\n id\n username\n password\n email\n }\n }\n ",
+  "variables": {
+    "username": "bob"
+  }
+}</code></pre>
+                </div>
+
+                <div class="answer-box">
+                    <strong>ANSWER:</strong> bob@graphql.thm
+                </div>
+            </div>
+
+            <h2>💉 6: GraphQL SQL Injection</h2>
+
+            <p>Navigate to <code>http://graphql.thm/labs/lab2/</code></p>
+
+            <div class="step-box">
+                <p><strong>Step 1:</strong> Capture the login request with Burp Suite</p>
+                <ul>
+                    <li>Username: <code>test</code></li>
+                    <li>Password: <code>anything</code></li>
+                </ul>
+            </div>
+
+            <div class="step-box">
+                <p><strong>Step 2:</strong> Look for the POST request and change the username in the query from <code>"test"</code> to <code>"test'"</code></p>
+                <p>This will generate an error on the page, confirming the SQL injection vulnerability.</p>
+            </div>
+
+            <div class="step-box">
+                <p><strong>Step 3:</strong> Change the username to: <code>test' OR '1'='1</code></p>
+                <p>In the response, you will get all the users' ID, password, and username from the database.</p>
+                <p>You'll find the flag in the response!</p>
+            </div>
+
+            <div class="answer-box">
+                <strong>ANSWER:</strong> GRAPHQL{sQl_1Nj3cti0n}
+            </div>
+
+            <h2>🛡️ 7: Securing GraphQL</h2>
+
+            <p>No answer needed - This section covers best practices for securing GraphQL APIs:</p>
+
+            <ul>
+                <li><strong>Disable Introspection in Production:</strong> While useful for development, introspection should be disabled in production environments to prevent information disclosure.</li>
+                <li><strong>Implement Query Depth Limiting:</strong> Prevent deeply nested queries that could cause performance issues.</li>
+                <li><strong>Use Parameterized Queries:</strong> Always use prepared statements and parameterized queries to prevent SQL injection.</li>
+                <li><strong>Authentication & Authorization:</strong> Implement proper authentication and field-level authorization.</li>
+                <li><strong>Rate Limiting:</strong> Implement rate limiting to prevent abuse and DoS attacks.</li>
+                <li><strong>Input Validation:</strong> Validate and sanitize all user inputs.</li>
+                <li><strong>Query Cost Analysis:</strong> Implement query complexity analysis to prevent resource exhaustion.</li>
+            </ul>
+
+            <h2>🎓 8: Conclusion</h2>
+
+            <p>No answer needed - Summary of the lab.</p>
+
+            <p>In this lab, we explored two critical GraphQL security vulnerabilities:</p>
+
+            <ol>
+                <li><strong>Introspection Abuse:</strong> Learned how unrestricted introspection can expose sensitive API structure and data.</li>
+                <li><strong>SQL Injection:</strong> Discovered how improper input validation in GraphQL queries can lead to SQL injection attacks.</li>
+            </ol>
+
+            <p>These vulnerabilities highlight the importance of implementing proper security measures when building GraphQL APIs. Always remember to:</p>
+            <ul>
+                <li>Disable introspection in production</li>
+                <li>Use parameterized queries</li>
+                <li>Implement proper authentication and authorization</li>
+                <li>Validate and sanitize all inputs</li>
+                <li>Monitor and log GraphQL queries</li>
+            </ul>
+
+            <div style="margin-top: 3rem; padding: 1.5rem; background: var(--bg-card); border-radius: 8px; text-align: center;">
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    <strong>Thanks for reading!</strong> 🎉
+                </p>
+                <a href="index.html" class="btn btn-primary">← Back to Blog</a>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="imprint.html">Imprint</a>
+            </div>
+            <div class="footer-copyright">
+                <p>Copyright © Ahmed 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
