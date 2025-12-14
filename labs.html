@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Labs | NetOps Journal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/netops.jpg" alt="NetOps Journal Logo" class="nav-logo-img">
+                <div class="nav-logo-text">
+                    <a href="index.html">NetOps Journal</a>
+                    <span class="nav-logo-tagline">Where networking meets automation.</span>
+                </div>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link">Categories</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="index.html#all">All</a></li>
+                        <li><a href="index.html#automation">Automation</a></li>
+                        <li><a href="index.html#opensource">Open-source</a></li>
+                        <li><a href="index.html#cisco">Cisco Technologies</a></li>
+                        <li><a href="index.html#juniper">Juniper Technologies</a></li>
+                        <li><a href="index.html#homeautomation">Home-Automation</a></li>
+                        <li><a href="index.html#homelab">Home-Lab</a></li>
+                        <li><a href="index.html#certifications">Certifications</a></li>
+                        <li><a href="projects.html">Projects</a></li>
+                        <li><a href="labs.html">Labs</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="index.html" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="projects.html" class="nav-link">Projects</a></li>
+                <li class="nav-item"><a href="labs.html" class="nav-link active">Labs</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="about.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Theme Toggle Button -->
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+        <span class="theme-toggle-icon">🎨</span>
+        <span class="theme-toggle-text">Change Theme</span>
+    </button>
+
+    <!-- Labs Hero Section -->
+    <section class="hero" style="padding: 80px 0 60px;">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">🔐 Security Labs</h1>
+                <p class="hero-subtitle">Hands-On Learning</p>
+                <p class="hero-description">Practical cybersecurity walkthroughs and vulnerability analysis</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+        <div class="container">
+            <!-- SQL Injection Lab -->
+            <article class="blog-card" style="max-width: 800px; margin: 0 auto;">
+                <div class="blog-category">Security Labs</div>
+                <h3 class="blog-title">🔐 SQL Injection Lab - Complete Walkthrough</h3>
+                <p class="blog-excerpt">
+                    Master SQL Injection techniques with this comprehensive TryHackMe lab walkthrough. Learn In-Band, Blind, Boolean-Based, and Time-Based SQL Injection attacks, from database enumeration to authentication bypass with practical examples and real flags.
+                </p>
+                
+                <div style="margin: 20px 0;">
+                    <h4 style="color: var(--accent-color); margin-bottom: 10px;">What You'll Learn:</h4>
+                    <ul style="color: var(--text-secondary); line-height: 1.8;">
+                        <li>🔍 In-Band SQL Injection (Error-Based & Union-Based)</li>
+                        <li>🕵️ Blind SQL Injection (Authentication Bypass)</li>
+                        <li>✅ Boolean-Based SQL Injection</li>
+                        <li>⏱️ Time-Based SQL Injection</li>
+                        <li>📡 Out-of-Band SQL Injection</li>
+                        <li>🛡️ Remediation and Best Practices</li>
+                    </ul>
+                </div>
+
+                <div style="margin: 20px 0;">
+                    <h4 style="color: var(--accent-color); margin-bottom: 10px;">Lab Details:</h4>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">TryHackMe</span>
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">SQL Injection</span>
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">Web Security</span>
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">Database</span>
+                    </div>
+                </div>
+
+                <div class="blog-meta" style="margin-top: 20px;">
+                    <span class="blog-date">Security Lab</span>
+                    <span class="blog-comments">Complete Walkthrough</span>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
+                    <a href="sql-injection-lab.html" class="btn btn-primary">
+                        📖 Start Lab
+                    </a>
+                    <a href="https://tryhackme.com/room/sqlinjectionlm" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+                        🌐 TryHackMe Room
+                    </a>
+                </div>
+            </article>
+
+            <!-- GraphQL Security Lab -->
+            <article class="blog-card" style="max-width: 800px; margin: 40px auto 0;">
+                <div class="blog-category">Security Labs</div>
+                <h3 class="blog-title">🔒 GraphQL Security Lab - Complete Walkthrough</h3>
+                <p class="blog-excerpt">
+                    Explore GraphQL security vulnerabilities including introspection abuse and SQL injection. Learn how to exploit GraphQL APIs and discover best practices for securing them with practical examples and solutions.
+                </p>
+                
+                <div style="margin: 20px 0;">
+                    <h4 style="color: var(--accent-color); margin-bottom: 10px;">What You'll Learn:</h4>
+                    <ul style="color: var(--text-secondary); line-height: 1.8;">
+                        <li>🔍 GraphQL Introspection Techniques</li>
+                        <li>🕵️ Schema Discovery and Enumeration</li>
+                        <li>💉 SQL Injection via GraphQL Queries</li>
+                        <li>📊 Data Exfiltration Methods</li>
+                        <li>🛡️ Securing GraphQL APIs</li>
+                        <li>✅ Best Practices and Remediation</li>
+                    </ul>
+                </div>
+
+                <div style="margin: 20px 0;">
+                    <h4 style="color: var(--accent-color); margin-bottom: 10px;">Lab Details:</h4>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">GraphQL</span>
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">API Security</span>
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">Introspection</span>
+                        <span style="padding: 4px 12px; background: var(--accent-color); color: var(--bg-primary); border-radius: 16px; font-size: 0.85rem;">SQL Injection</span>
+                    </div>
+                </div>
+
+                <div class="blog-meta" style="margin-top: 20px;">
+                    <span class="blog-date">Security Lab</span>
+                    <span class="blog-comments">Complete Walkthrough</span>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
+                    <a href="graphql-lab.html" class="btn btn-primary">
+                        📖 Start Lab
+                    </a>
+                </div>
+            </article>
+
+            <!-- More Labs Coming Soon -->
+            <article class="blog-card" style="max-width: 800px; margin: 40px auto 0; border: 2px dashed var(--border-color);">
+                <div class="blog-category" style="background: var(--bg-secondary);">Coming Soon</div>
+                <h3 class="blog-title">🚀 More Security Labs</h3>
+                <p class="blog-excerpt" style="text-align: center; padding: 2rem 0;">
+                    Additional security labs and walkthroughs are in development. Stay tuned for more hands-on learning opportunities covering OWASP Top 10, API security, network exploitation, and more!
+                </p>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="imprint.html">Imprint</a>
+            </div>
+            <div class="footer-copyright">
+                <p>Copyright © Ahmed 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
