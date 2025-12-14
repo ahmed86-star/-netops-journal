@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Injection Lab | NetOps Journal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        .blog-post {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        .blog-post h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            text-shadow: var(--glow-primary);
+            text-align: center;
+        }
+        .blog-post h2 {
+            font-size: 2rem;
+            margin: 3rem 0 1.5rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        .blog-post h3 {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+        .blog-post h4 {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--text-secondary);
+        }
+        .blog-post p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+        .blog-post strong {
+            color: var(--primary-color);
+        }
+        .blog-post ul, .blog-post ol {
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+            color: var(--text-secondary);
+        }
+        .blog-post li {
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+        .blog-post pre {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            display: block;
+            margin: 1.5rem 0;
+        }
+        .blog-post code {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+        }
+        .blog-post pre code {
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+        .lab-access {
+            background: var(--bg-card);
+            border-left: 4px solid var(--accent-color);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+        .lab-access a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .lab-access a:hover {
+            text-decoration: underline;
+        }
+        .question-box {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+        .question-box h4 {
+            color: var(--accent-color);
+            margin-top: 0;
+        }
+        .answer-box {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 4px;
+        }
+        .answer-box strong {
+            color: var(--primary-color);
+        }
+        .attempt-box {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+            border-left: 3px solid var(--accent-color);
+        }
+        .attempt-box strong {
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/netops.jpg" alt="NetOps Journal Logo" class="nav-logo-img">
+                <div class="nav-logo-text">
+                    <a href="index.html">NetOps Journal</a>
+                    <span class="nav-logo-tagline">Where networking meets automation.</span>
+                </div>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link">Categories</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="index.html#all">All</a></li>
+                        <li><a href="index.html#kubernetes">Kubernetes</a></li>
+                        <li><a href="index.html#automation">Automation</a></li>
+                        <li><a href="index.html#opensource">Open-source</a></li>
+                        <li><a href="index.html#cisco">Cisco Technologies</a></li>
+                        <li><a href="index.html#juniper">Juniper Technologies</a></li>
+                        <li><a href="index.html#homeautomation">Home-Automation</a></li>
+                        <li><a href="index.html#homelab">Home-Lab</a></li>
+                        <li><a href="index.html#certifications">Certifications</a></li>
+                        <li><a href="index.html#projects">Projects</a></li>
+                        <li><a href="index.html#labs">Labs</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="index.html" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="projects.html" class="nav-link">Projects</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="about.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Theme Toggle Button -->
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+        <span class="theme-toggle-icon">🎨</span>
+        <span class="theme-toggle-text">Change Theme</span>
+    </button>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+        <article class="blog-post">
+            <h1>🔐 SQL Injection Lab - Complete Walkthrough</h1>
+
+            <div class="lab-access">
+                <p><strong>🎯 Lab Access:</strong> <a href="https://tryhackme.com/room/sqlinjectionlm" target="_blank" rel="noopener noreferrer">https://tryhackme.com/room/sqlinjectionlm</a></p>
+            </div>
+
+            <h2>📌 Introduction to SQL Injection</h2>
+            <p><strong>SQL (Structured Query Language) Injection (SQLI)</strong> — It is an exploit on a web application database server that results in the execution of malicious queries.</p>
+            
+            <p>When a web application communicates with a database utilizing user input that hasn't been properly validated, an attacker has the potential to steal, delete, or alter private and customer data as well as attack the web application's authentication procedures to private or customer areas.</p>
+            
+            <p>It is one of the oldest web application vulnerabilities, but it is also one of the most destructive.</p>
+
+            <div class="question-box">
+                <h4>[Question 1.1] What does SQL stand for?</h4>
+                <div class="answer-box">
+                    <strong>Answer:</strong> Structured Query Language
+                </div>
+            </div>
+
+            <h2>💾 Understanding Databases</h2>
+            <p>A database is a method of electronically storing collections of data in an organized manner. A database is administered by a <strong>DBMS</strong>, which is an acronym for <strong>Database Management System</strong>.</p>
+
+            <h3>DBMS Types</h3>
+            <ul>
+                <li><strong>Relational</strong></li>
+                <li><strong>Non-Relational</strong></li>
+            </ul>
+
+            <h3>Common DBMS:</h3>
+            <ul>
+                <li>MySQL</li>
+                <li>Microsoft SQL</li>
+                <li>Access</li>
+                <li>PostgreSQL</li>
+                <li>SQLite</li>
+            </ul>
+
+            <p>A DBMS can contain several databases, each with its own collection of connected data.</p>
+            
+            <p>For instance, you could have a database called "shop." You wish to record information about products available to buy, users who have signed up for your online shop, and orders you've received in this database.</p>
+            
+            <p>This information would be stored individually in the database using <strong>"tables"</strong>, which are recognized by a unique name for each one.</p>
+
+            <h3>What are tables?</h3>
+            <p>A table is made up of <strong>columns</strong> and <strong>rows</strong></p>
+            
+            <ul>
+                <li>Think of a table as a grid</li>
+                <li>With columns going across the top from left to right holding the name of the cell</li>
+                <li>Rows going from top to bottom containing the actual data</li>
+            </ul>
+
+            <h3>Columns:</h3>
+            <p>Each column, also known as a <strong>"field"</strong>, has a unique name for each table.</p>
+            
+            <p>When you create a column, you can specify what type of data it will include.</p>
+            
+            <p><strong>Common data types include:</strong> integers (numbers), strings (standard text), and dates.</p>
+            
+            <p>Some databases, such as geospatial, can include far more complicated data, such as location information.</p>
+            
+            <p>Setting the data type also prevents inaccurate information from being stored, such as the string "hello world" being placed in a date column. If this occurs, the database server will often generate an error message.</p>
+            
+            <p>An <strong>auto-increment</strong> feature can be enabled in a column containing an integer; this gives each row of data a unique number that grows (increments) with each subsequent row, creating what is known as a <strong>primary key</strong>; a primary field must be unique for every row of data and can be used to find that exact row in SQL queries.</p>
+
+            <h3>Rows:</h3>
+            <p>Individual lines of data are stored in rows or records.</p>
+            
+            <p>When you add data to the table, it creates a new row/record, and when you delete data, it removes a row/record.</p>
+
+            <h3>Relational vs. Non-Relational Database:</h3>
+            <p><strong>Relational</strong> — It contains information in tables, and the tables frequently interchange information; columns indicate and define the data being saved, while rows actually contain the data.</p>
+            
+            <p>The tables will frequently contain a column with a unique ID (primary key), which will subsequently be used to reference it in other tables, resulting in a relationship between the tables, hence the name relational database.</p>
+            
+            <p><strong>Non-Relational</strong> — Because a database does not utilize tables, columns, and rows to store data, a certain database layout is not required, and each row of data can include different information, providing greater flexibility than a relational database.</p>
+            
+            <p>Some popular databases of this type are MongoDB, Cassandra and ElasticSearch.</p>
+
+            <div class="question-box">
+                <h4>[Question 2.1] What is the acronym for the software that controls a database?</h4>
+                <div class="answer-box">
+                    <strong>Answer:</strong> DBMS
+                </div>
+            </div>
+
+            <div class="question-box">
+                <h4>[Question 2.2] What is the name of the grid-like structure which holds the data?</h4>
+                <div class="answer-box">
+                    <strong>Answer:</strong> Table
+                </div>
+            </div>
+
+            <h2>🔍 SQL Statements</h2>
+            <p>Yes, even though SQL has a variety of syntax, the main foundation would be "retrieve (select)," "update," "insert," and "delete" data.</p>
+            
+            <p>Some database management systems have their own syntax, but the basic principle is the same, and it's important to note that <strong>SQL syntax is NOT case sensitive</strong>.</p>
+
+            <h3>1st — SELECT</h3>
+            <p>It is used to <strong>RETRIEVE</strong> data from a database.</p>
+
+            <p><strong>Example #1:</strong> <code>select * from users;</code></p>
+            <ul>
+                <li><code>select</code> = want to retrieve some data</li>
+                <li><code>*</code> = want to receive back all columns from the table</li>
+                <li><code>from users</code> = want to retrieve the data from the table named users</li>
+                <li><code>;</code> = tells the database that this is the end of the query</li>
+            </ul>
+
+            <p><strong>Example #2:</strong> <code>select username, password from users;</code></p>
+            <ul>
+                <li>Requesting only the "username" and "password" field.</li>
+            </ul>
+
+            <p><strong>Example #3:</strong> <code>select * from users LIMIT 1;</code></p>
+            <ul>
+                <li><code>LIMIT 1</code> = forces the database only to return one row of data</li>
+            </ul>
+
+            <p><strong>Example #4:</strong> <code>select * from users where username='admin';</code></p>
+            <ul>
+                <li>This will only return the rows where the username is equal to "admin"</li>
+            </ul>
+
+            <p><strong>Example #5:</strong> <code>select * from users where username != 'admin';</code></p>
+            <ul>
+                <li>Query where not equal to admin</li>
+                <li><code>!=</code> = NOT EQUAL</li>
+            </ul>
+
+            <p><strong>Example #6:</strong> <code>select * from users where username='admin' or username='jon';</code></p>
+            <ul>
+                <li>This will only return the rows where the username is either equal to admin or jon.</li>
+            </ul>
+
+            <p><strong>Example #7:</strong> <code>select * from users where username='admin' and password='p4ssword';</code></p>
+            <ul>
+                <li>This will only return the rows where the username is equal to "admin", and the password is equal to "p4ssword".</li>
+            </ul>
+
+            <p><strong>Example #8:</strong> <code>select * from users where username like 'a%';</code></p>
+            <ul>
+                <li>This returns any rows with username beginning with the letter "a"</li>
+            </ul>
+
+            <p><strong>Example #9:</strong> <code>select * from users where username like '%n';</code></p>
+            <ul>
+                <li>This returns any rows with username ending with the letter "n"</li>
+            </ul>
+
+            <p><strong>Example #10:</strong> <code>select * from users where username like '%mi%';</code></p>
+            <ul>
+                <li>This returns any rows with a username containing the characters "mi" within them</li>
+            </ul>
+
+            <h3>2nd — UNION</h3>
+            <p>It combines the results of two or more SELECT queries to retrieve data from one or more tables.</p>
+            
+            <p>The rule is that each "SELECT" query must obtain the same number of columns, the columns must be of a similar data type, and the column order must be the same.</p>
+
+            <p><strong>Using the following SQL Statement, we can gather the results from the two tables and put them into one result set:</strong></p>
+            <pre><code>SELECT name,address,city,postcode from customers 
+UNION 
+SELECT company,address,city,postcode from suppliers;</code></pre>
+
+            <p>Take note of the fact that it has merged. Even if each is distinct in its own table, the "field types" columns are the same, and so it is possible to combine since it requires the same (1) same columns, (2) similar data types, and (3) order.</p>
+
+            <h3>3rd — INSERT</h3>
+            <p>It instructs the database that we would want to insert a new row of data into the table.</p>
+
+            <pre><code>insert into users (username,password) values ('bob','password123');</code></pre>
+
+            <ul>
+                <li><code>into users</code> = tells the database which table we wish to insert the data into</li>
+                <li><code>(username,password)</code> = provides the columns we are providing data for</li>
+                <li><code>values ('bob','password');</code> = provides the data for the previously specified columns.</li>
+            </ul>
+
+            <h3>4th — UPDATE</h3>
+            <p>It instructs the database that we want to modify one or more rows of data in a table.</p>
+
+            <pre><code>update users SET username='root',password='pass123' where username='admin';</code></pre>
+
+            <p>You specify the table you wish to update using <code>update %tablename% SET</code> and then select the field or fields you wish to update as a comma-separated list such as <code>username='root',password='pass123'</code> then finally similar to the SELECT statement, you can specify exactly which rows to update using the where clause such as <code>where username='admin';</code>.</p>
+
+            <h3>5th — DELETE</h3>
+            <p>It instructs the database that we want to remove one or more rows of data.</p>
+            
+            <p>It is similar to "SELECT" in that you can specify which data to delete using the where clause and the number of rows to remove using the LIMIT clause.</p>
+
+            <pre><code>delete from users where username='martin';</code></pre>
+
+            <pre><code>delete from users;</code></pre>
+            <ul>
+                <li>Because no "WHERE" clause was being used in the query, all the data is deleted in the table.</li>
+            </ul>
+
+            <div class="question-box">
+                <h4>[Question 3.1] What SQL statement is used to retrieve data?</h4>
+                <div class="answer-box">
+                    <strong>Answer:</strong> SELECT
+                </div>
+            </div>
+
+            <div class="question-box">
+                <h4>[Question 3.2] What SQL clause can be used to retrieve data from multiple tables?</h4>
+                <div class="answer-box">
+                    <strong>Answer:</strong> UNION
+                </div>
+            </div>
+
+            <div class="question-box">
+                <h4>[Question 3.3] What SQL statement is used to add data?</h4>
+                <div class="answer-box">
+                    <strong>Answer:</strong> INSERT
+                </div>
+            </div>
+
+            <h2>💉 What is SQL Injection?</h2>
+            <p>When user-provided data is incorporated in the SQL query, a web application using SQL can become vulnerable to SQL Injection.</p>
+
+            <div class="question-box">
+                <h4>[Question 4.1] What character signifies the end of an SQL query?</h4>
+                <div class="answer-box">
+                    <strong>Answer:</strong> ;
+                </div>
+            </div>
+
+            <h2>🎯 In-Band SQL Injection</h2>
+            <p>It is among the simplest to detect and exploit. It refers to the same communication channel used to exploit the vulnerability and get the findings.</p>
+            
+            <p><strong>Example:</strong> Detecting a SQL Injection vulnerability on a website page and then extracting data from the database and displaying it on the same webpage</p>
+
+            <h3>Error-Based SQL Injection</h3>
+            <p>It's most beneficial for quickly obtaining information about the database structure because database error notifications are printed immediately to the browser screen.</p>
+            
+            <p>This is frequently used to enumerate a whole database.</p>
+
+            <h3>Union-Based SQL Injection</h3>
+            <p>It uses the SQL "UNION" operator in combination with a "SELECT" statement to return more results to the page.</p>
+            
+            <p>This is the most typical approach for retrieving massive volumes of data through a SQL Injection vulnerability.</p>
+
+            <h3>The trick to detecting "Error-Based SQL Injection":</h3>
+            <p>It is to BREAK the code's SQL query by attempting specific characters until an error message is issued; these are typically:</p>
+            <ul>
+                <li>single apostrophes (<code>'</code>) or</li>
+                <li>quotation marks (<code>"</code>)</li>
+            </ul>
+
+            <p>Try inserting an apostrophe (<code>'</code>) after the id=1 and pressing enter.</p>
+            
+            <p>And as you can see, this returns a SQL error indicating you of a syntax mistake.</p>
+            
+            <p>The fact that you received this error message confirms the existence of a SQL Injection vulnerability. We can now exploit this flaw and use the error messages to learn more about the database structure.</p>
+
+            <div class="question-box">
+                <h4>[Question 5.1] What is the flag after completing level 1?</h4>
+                
+                <div class="attempt-box">
+                    <p><strong>1st — Access Webpage</strong></p>
+                </div>
+
+                <div class="attempt-box">
+                    <p><strong>2nd — Added apostrophe (')</strong></p>
+                    <p>The fact that you received this error message confirms the existence of a SQL Injection vulnerability. We can now exploit this flaw and use the error messages to learn more about the database structure.</p>
+                </div>
+
+                <div class="attempt-box">
+                    <p><strong>3rd — Add UNION Operator</strong></p>
+                    <p>The rationale for this is so that we can acquire an additional result of our choosing.</p>
+                    
+                    <p><strong>Attempt #1:</strong> <code>1 UNION SELECT 1</code></p>
+                    <p>This line should generate an error message indicating that the UNION SELECT statement has fewer columns than the initial SELECT query.</p>
+                    
+                    <p><strong>Attempt #2:</strong> <code>1 UNION SELECT 1,2</code></p>
+                    <p>Same error, so let's try again with another column.</p>
+                    
+                    <p><strong>Attempt #3:</strong> <code>1 UNION SELECT 1,2,3</code></p>
+                    <p>Success! The error notification has been removed, and the article is now displayed; nevertheless, we would like to display our data instead of the article.</p>
+                    
+                    <p>The article is displayed because it presents the first returning result from somewhere in the website's code. To get around this, the first query must return no results. This is efficiently done by altering the article id from 1 &gt;&gt;&gt; to &gt;&gt;&gt; 0.</p>
+                    
+                    <p><strong>Attempt #4:</strong> <code>0 UNION SELECT 1,2,3</code></p>
+                    <p>You can now see that the article is simply the result of the "UNION" select returning the column values 1, 2, and 3.</p>
+                    
+                    <p>We may begin obtaining more valuable information by using the returned values.</p>
+                    
+                    <p><strong>Attempt #5:</strong> <code>0 UNION SELECT 1,2,database()</code></p>
+                    <p>First, we'll obtain the database name to which we have access</p>
+                    
+                    <p>Where the number 3 was previously displayed, the name of the database, sqli_one, is now displayed.</p>
+                    
+                    <p><strong>Attempt #6:</strong> <code>0 UNION SELECT 1,2,group_concat(table_name) FROM information_schema.tables WHERE table_schema = 'sqli_one'</code></p>
+                    <p><strong>Information to comprehend:</strong></p>
+                    <ul>
+                        <li><code>group_concat()</code> — Gets the specified column (table_name) from multiple returned rows and puts it into one string separated by commas</li>
+                        <li><code>information_schema</code> database — Every user of the database has access to this, and it contains information about all the databases and tables the user has access to</li>
+                    </ul>
+                    <p>In this particular query, we're interested in listing all the tables in the sqli_one database, which is article and staff_users</p>
+                    
+                    <p><strong>Attempt #7:</strong> <code>0 UNION SELECT 1,2,group_concat(column_name) FROM information_schema.columns WHERE table_name = 'staff_users'</code></p>
+                    <p>This is identical to the preceding SQL query.</p>
+                    
+                    <p>However, the information we want to retrieve has changed from table_name to column_name, the table we're querying in the information_schema database has changed from table to columns, and we're looking for any rows with a value of staff_users in the table_name column.</p>
+                    
+                    <p><strong>Attempt #8:</strong> <code>0 UNION SELECT 1,2,group_concat(username,':',password SEPARATOR '&lt;br&gt;') FROM staff_users</code></p>
+                    
+                    <p>Again we use the group_concat method to return all of the rows into one string and to make it easier to read.</p>
+                    
+                    <p>We've also added <code>,':', </code>to split the username and password from each other.</p>
+                    
+                    <p>Instead of being separated by a comma, we've chosen the HTML <code>&lt;br&gt;</code> tag that forces each result to be on a separate line to make for easier reading.</p>
+                </div>
+
+                <div class="answer-box">
+                    <strong>Answer:</strong> THM{SQL_INJECTION_3840}
+                </div>
+            </div>
+
+            <h2>🕵️ Blind SQL Injection</h2>
+            <p><strong>Blind SQLi</strong> — It typically receives little to no response to confirm whether our injected queries were successful or not; this is because the error alerts have been disabled, but the injection continues to function.</p>
+            
+            <p>But all we need is that small amount of feedback to successfully enumerate an entire database.</p>
+
+            <h3>Authentication Bypass</h3>
+            <p>When overcoming authentication mechanisms such as login forms, one of the most simple Blind SQL Injection techniques is used.</p>
+            
+            <p>We're not interested in retrieving data from the database in this case; we just want to get past the login.</p>
+            
+            <p>Login forms that are linked to a user database are frequently designed in such a way that the web application is less bothered with the content of the username and password and more concerned with whether the two form a matching pair in the users table.</p>
+            
+            <p>In simple terms, the web application asks the database, "Do you have a user with the username bob and the password bob123?" The database responds with either yes or no (true/false) and determines whether or not the web program allows you to proceed.</p>
+            
+            <p><strong>Here's the trick to bypass:</strong> We only need to construct a database query that returns a yes/no response.</p>
+
+            <div class="question-box">
+                <h4>[Question 6.1] What is the flag after completing level two? (and moving to level 3)</h4>
+                
+                <div class="attempt-box">
+                    <p><strong>Attempt #1:</strong></p>
+                    <pre><code>select * from users where username='%username%' and password='%password%' LIMIT 1;</code></pre>
+                    <p><strong>Note:</strong> The %username% and %password% values are taken from the login form fields, the initial values in the SQL Query box will be blank as these fields are currently empty.</p>
+                </div>
+
+                <div class="attempt-box">
+                    <p><strong>Attempt #2:</strong> <code>' OR 1=1; --</code></p>
+                    <p>To make this into a query that always returns as "TRUE"</p>
+                    <p>The above's SQL query into the following:</p>
+                    <pre><code>select * from users where username='' and password='' OR 1=1;</code></pre>
+                </div>
+
+                <div class="answer-box">
+                    <strong>Answer:</strong> THM{SQL_INJECTION_9581}
+                </div>
+            </div>
+
+            <h3>Boolean Based</h3>
+            <p>It references the outcome of our injection attempts, which may be true/false, yes/no, on/off, 1/0, or any other answer with only TWO possible outcomes.</p>
+            
+            <p>That result confirms whether or not our SQL Injection payload was successful.</p>
+
+            <div class="question-box">
+                <h4>[Question 7.1] What is the flag after completing level three?</h4>
+                
+                <p>After entering "Stage 3" and attempting to comprehend how it works.</p>
+                
+                <p>It was discovered that the browser body carries the contents of <code>{"taken":true}</code>.</p>
+                
+                <p>This API endpoint mimics a typical feature present on many signup forms, which checks to see if a username has already been registered and prompts the user to select a different username.</p>
+                
+                <p>We can presume the username admin is already registered because the taken value is set to true. Indeed, we can validate this by changing the username in the dummy browser's address bar from admin to admin123, and then pressing enter. The value taken will now be false.</p>
+                
+                <p><strong>Here's how the SQL query was processed:</strong></p>
+                <pre><code>select * from users where username = '%username%' LIMIT 1;</code></pre>
+                
+                <p>Because the only input we have control over is the username in the query string, we must use it to accomplish SQL Injection.</p>
+                
+                <p>Keeping the username admin123, we can begin adding to it in order to get the database to affirm true things, which will alter the state of the taken field from false to true.</p>
+                
+                <div class="attempt-box">
+                    <p><strong>Replace the username with the following:</strong></p>
+                    <pre><code>admin123' UNION SELECT 1;--</code></pre>
+                    <p>We can establish that this is the incorrect value of columns because the web application responded with the value taken as false.</p>
+                    
+                    <p>Continue to add columns until we get a taken value of true.</p>
+                    
+                    <p><strong>Set the username to the following value to test that the response is three columns:</strong></p>
+                    <pre><code>admin123' UNION SELECT 1,2,3;--</code></pre>
+                    
+                    <p>Now that we've determined the number of columns, we can begin enumerating the database. Our initial duty is to determine the name of the database. We may accomplish this by calling the database() method and then using the like operator to look for results that return a true state.</p>
+                    
+                    <p><strong>Try the username value below and see what happens:</strong></p>
+                    <pre><code>admin123' UNION SELECT 1,2,3 where database() like '%';--</code></pre>
+                    
+                    <p>We obtain a true response since the like operator only has the value %, which will match anything because it is a wildcard value.</p>
+                    
+                    <p>When we alter the wildcard operator to a%, the result returns to false, confirming that the database name does not start with the letter a. We can go through all of the letters, numbers, and characters like "dash (-)" and _ until we find a match. If you enter the following as the username value, you will get a true response confirming that the database name begins with the letter s.</p>
+                    
+                    <pre><code>admin123' UNION SELECT 1,2,3 where database() like 's%';--</code></pre>
+                    
+                    <p>Now you move onto the next character of the database name until you find another true response, for example, 'sa%', 'sb%', 'sc%' etc. Keep on with this process until you discover all the characters of the database name, which is <strong>sqli_three</strong>.</p>
+                    
+                    <p>We've established the database name, which we can now use to enumerate table names using a similar method by utilising the information_schema database. Try setting the username to the following value:</p>
+                    
+                    <pre><code>admin123' UNION SELECT 1,2,3 FROM information_schema.tables WHERE table_schema = 'sqli_three' and table_name like 'a%';--</code></pre>
+                    
+                    <p>This query looks for results in the information_schema database in the tables table where the database name matches sqli_three, and the table name begins with the letter a. As the above query results in a false response, we can confirm that there are no tables in the sqli_three database that begin with the letter a. Like previously, you'll need to cycle through letters, numbers and characters until you find a positive match.</p>
+                    
+                    <p>You'll finally end up discovering a table in the sqli_three database named <strong>users</strong>, which you can be confirmed by running the following username payload:</p>
+                    
+                    <pre><code>admin123' UNION SELECT 1,2,3 FROM information_schema.tables WHERE table_schema = 'sqli_three' and table_name='users';--</code></pre>
+                    
+                    <p>Finally, we must enumerate the column names in the users database in order to correctly search for login credentials. We can now query the information schema database for column names using the information we've already gathered. We search the columns table using the payload below, where the database is sqli three, the table name is users, and the column name begins with the letter a.</p>
+                    
+                    <pre><code>admin123' UNION SELECT 1,2,3 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='sqli_three' and TABLE_NAME='users' and COLUMN_NAME like 'a%';--</code></pre>
+                    
+                    <p>Again you'll need to cycle through letters, numbers and characters until you find a match. As you're looking for multiple results, you'll have to add this to your payload each time you find a new column name, so you don't keep discovering the same one. For example, once you've found the column named id, you'll append that to your original payload (as seen below).</p>
+                    
+                    <pre><code>admin123' UNION SELECT 1,2,3 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='sqli_three' and TABLE_NAME='users' and COLUMN_NAME like 'a%' and COLUMN_NAME !='id';--</code></pre>
+                    
+                    <p>Repeating this process three times will enable you to discover the columns <strong>id, username and password</strong>. Which now you can use to query the users table for login credentials. First, you'll need to discover a valid username which you can use the payload below:</p>
+                    
+                    <pre><code>admin123' UNION SELECT 1,2,3 from users where username like 'a%';--</code></pre>
+                    
+                    <p>Which, once you've cycled through all the characters, you will confirm the existence of the username <strong>admin</strong>. Now you've got the username. You can concentrate on discovering the password. The payload below shows you how to find the password:</p>
+                    
+                    <p>Cycling through all the characters, you'll discover the password is <strong>3845</strong>.</p>
+                </div>
+
+                <div class="answer-box">
+                    <strong>Answer:</strong> THM{SQL_INJECTION_1093}
+                </div>
+            </div>
+
+            <h3>Time-Based</h3>
+            <p>It is fairly similar to the previous Boolean-based method in that the identical requests are sent, but there is no visual indicator of whether your queries are correct or incorrect this time.</p>
+            
+            <p>Instead, the time it takes to execute the query is your indicator of a correct query. This time delay is generated by using built-in techniques like <code>SLEEP(x)</code> in conjunction with the UNION statement.</p>
+            
+            <p>The SLEEP() method is only called after a successful UNION SELECT statement.</p>
+            
+            <p>As an example, while attempting to get the number of columns in a table, you might use the query:</p>
+            
+            <pre><code>admin123' UNION SELECT SLEEP(5);--</code></pre>
+            
+            <p>If there was no pause in the response time, we know the query was unsuccessful, therefore we add another column, as we did in prior tasks:</p>
+            
+            <pre><code>admin123' UNION SELECT SLEEP(5),2;--</code></pre>
+            
+            <p>This payload should have created a 5-second time delay, confirming that the UNION statement was successfully executed and that there are two columns.</p>
+            
+            <p>Repeat the enumeration process from the Boolean-based SQL Injection by inserting the SLEEP() method inside the UNION SELECT query.</p>
+            
+            <p>If you're having trouble locating the table name, the query following should help:</p>
+            
+            <pre><code>referrer=admin123' UNION SELECT SLEEP(5),2 where database() like 'u%';--</code></pre>
+
+            <div class="question-box">
+                <h4>[Question 8.1] What is the final flag after completing level four?</h4>
+                <p><strong>Hint:</strong> 496x (guess the last digit)</p>
+                <div class="answer-box">
+                    <strong>Answer:</strong> THM{SQL_INJECTION_MASTER}
+                </div>
+            </div>
+
+            <h2>📡 Out-of-Band SQL Injection</h2>
+            <p>It isn't as frequent because it is dependent on either specific database server functionality being enabled or the web application's business logic, which performs some kind of external network call based on the results of a SQL query.</p>
+            
+            <p>It is distinguished by having two distinct communication channels.</p>
+            
+            <ol>
+                <li>to begin the attack</li>
+                <li>to compile the findings</li>
+            </ol>
+            
+            <p>The attack channel, for example, could be a web request, while the data collection channel could be monitoring HTTP/DNS requests made to a service you manage.</p>
+            
+            <h3>Out-of-Band Attack Process:</h3>
+            <ol>
+                <li>An attacker makes a request to a website vulnerable to SQL Injection with an injection payload.</li>
+                <li>The Website makes an SQL query to the database which also passes the hacker's payload.</li>
+                <li>The payload contains a request which forces an HTTP request back to the hacker's machine containing data from the database.</li>
+            </ol>
+
+            <div class="question-box">
+                <h4>[Question 9.1] Name a protocol beginning with D that can be used to exfiltrate data from a database.</h4>
+                <div class="answer-box">
+                    <strong>Answer:</strong> DNS
+                </div>
+            </div>
+
+            <h2>🛡️ Remediation</h2>
+            <p>As destructive as SQL Injection vulnerabilities are, developers may defend their web applications from them by following the guidelines below:</p>
+
+            <h3>Prepared Statements (With Parameterized Queries):</h3>
+            <p>The SQL query is the first item a developer writes in a prepared query, followed by any user inputs as parameters.</p>
+            
+            <p>Preparing statements guarantees that the SQL code structure remains constant and that the database can distinguish between the query and the data.</p>
+            
+            <p>As an added bonus, it makes your code look much cleaner and easier to read.</p>
+
+            <h3>Input Validation:</h3>
+            <p>Input validation can help to protect what is entered into a SQL query.</p>
+            
+            <p>An allow list can be used to limit input to only specific strings, or a string replacement technique in the programming language can be used to filter the characters you want to allow or disallow.</p>
+
+            <h3>Escaping User Input:</h3>
+            <p>Allowing user input including characters like <code>' " $ \</code> can cause SQL Queries to malfunction or, even worse, expose them up to injection attempts, as we've seen.</p>
+            
+            <p>Escaping user input is the process of appending a backslash (\) to certain characters, causing them to be parsed as a standard string rather than a special character.</p>
+
+            <div class="question-box">
+                <h4>[Question 10.1] Name a method of protecting yourself from an SQL Injection exploit.</h4>
+                <div class="answer-box">
+                    <strong>Answer:</strong> Prepared Statements
+                </div>
+            </div>
+
+            <h2>🎓 Conclusion</h2>
+            <p>As entertaining as it appears, it reveals a lot about the potential weakness that an adversary could try to exploit by employing SQL Injection to retrieve potentially dangerous information.</p>
+            
+            <p>Indeed, the "remediation" provided by TryHackMe would be a helpful guideline to avoid being "attacked," but there will never be a failsafe method, thus due caution is still required.</p>
+            
+            <p><strong>Cheers! ◡̈</strong></p>
+
+            <div style="margin-top: 3rem; padding: 1.5rem; background: var(--bg-card); border-radius: 8px; text-align: center;">
+                <a href="index.html#labs" class="btn btn-primary" style="margin-right: 1rem;">← Back to Labs</a>
+                <a href="https://tryhackme.com/room/sqlinjectionlm" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Try the Lab Yourself →</a>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="imprint.html">Imprint</a>
+            </div>
+            <div class="footer-copyright">
+                <p>Copyright © Ahmed 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
