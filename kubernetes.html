@@ -694,6 +694,386 @@ kubectl get services</code></pre>
 
                 <p><strong>Snapshot VMs</strong>: Take Proxmox snapshots before major changes. They're lifesavers when experiments go wrong.</p>
 
+                <h2>Cluster Upgrade: Version 2 - Building a 6-Node Kubernetes Cluster with GitLab GitOps</h2>
+
+                <p>After successfully running the 3-node K3s cluster, the next evolution is building a production-ready 6-node cluster managed through GitLab GitOps workflows. This upgrade combines k3s for lightweight orchestration, Proxmox for virtualization, and Longhorn for distributed persistent storage—all orchestrated through GitLab CI/CD pipelines and ArgoCD for declarative deployments.</p>
+
+                <h3>Complete Guide: Proxmox, k3s, GitLab CI/CD, and Longhorn Storage</h3>
+
+                <h3>Introduction and Architecture Overview</h3>
+
+                <p>This upgrade walks through building a 6-node production-ready Kubernetes cluster managed through GitLab GitOps workflows. The cluster combines k3s for lightweight orchestration, Proxmox for virtualization, and Longhorn for distributed persistent storage—all orchestrated through GitLab CI/CD pipelines and ArgoCD for declarative deployments. This creates an enterprise-grade learning environment where infrastructure changes flow through Git commits to your running cluster.</p>
+
+                <h3>What You're Building</h3>
+
+                <p>A fully GitOps-managed 6-node cluster with GitLab as the source of truth for all infrastructure and application deployments. Every change—from network policy to application versions—lives in your GitLab repository and automatically syncs to the cluster.</p>
+
+                <h3>Target Cluster Architecture</h3>
+
+                <p>A 6-node Kubernetes cluster optimized for learning enterprise patterns:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Node Type</th>
+                            <th>Count</th>
+                            <th>Configuration</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>k3s Server (Control Plane)</td>
+                            <td>3</td>
+                            <td>2 vCPU, 4GB RAM each</td>
+                        </tr>
+                        <tr>
+                            <td>k3s Agent (Worker)</td>
+                            <td>3</td>
+                            <td>2 vCPU, 3GB RAM each</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Key Technology Stack</h3>
+
+                <ul>
+                    <li><strong>k3s</strong>: Lightweight Kubernetes</li>
+                    <li><strong>Proxmox</strong>: Virtualization Layer</li>
+                    <li><strong>GitLab</strong>: Source Control and CI/CD</li>
+                    <li><strong>ArgoCD</strong>: Declarative Deployment</li>
+                    <li><strong>Longhorn</strong>: Distributed Storage</li>
+                    <li><strong>External Secrets Operator</strong>: Vault Integration</li>
+                </ul>
+
+                <h3>GitOps Workflow</h3>
+
+                <p>Your cluster is managed entirely through Git. The flow works like this:</p>
+
+                <ol>
+                    <li>Developer commits Kubernetes manifests to GitLab</li>
+                    <li>GitLab CI/CD pipeline runs validation and tests</li>
+                    <li>Pipeline updates image versions in GitOps repository</li>
+                    <li>ArgoCD detects the Git change</li>
+                    <li>Cluster automatically synchronizes to match Git state</li>
+                </ol>
+
+                <h2>Your 6-Node Cluster Configuration</h2>
+
+                <h3>Cluster Node IPs</h3>
+
+                <p>Your 6-node cluster uses static IP addressing. Update these values in all commands to match your actual setup:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Node Name</th>
+                            <th>Type</th>
+                            <th>IP Address</th>
+                            <th>Hostname</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Control Plane 1</td>
+                            <td>Server</td>
+                            <td>10.10.10.21</td>
+                            <td>k3s-server-1</td>
+                        </tr>
+                        <tr>
+                            <td>Control Plane 2</td>
+                            <td>Server</td>
+                            <td>10.10.10.22</td>
+                            <td>k3s-server-2</td>
+                        </tr>
+                        <tr>
+                            <td>Control Plane 3</td>
+                            <td>Server</td>
+                            <td>10.10.10.23</td>
+                            <td>k3s-server-3</td>
+                        </tr>
+                        <tr>
+                            <td>Worker 1</td>
+                            <td>Agent</td>
+                            <td>10.10.10.24</td>
+                            <td>k3s-agent-1</td>
+                        </tr>
+                        <tr>
+                            <td>Worker 2</td>
+                            <td>Agent</td>
+                            <td>10.10.10.25</td>
+                            <td>k3s-agent-2</td>
+                        </tr>
+                        <tr>
+                            <td>Worker 3</td>
+                            <td>Agent</td>
+                            <td>10.10.10.26</td>
+                            <td>k3s-agent-3</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>k3s Installation Quick Reference</h3>
+
+                <p>Replace the IP addresses in these commands with your actual cluster IPs:</p>
+
+                <pre><code># On first server (k3s-server-1)
+curl -sfL https://get.k3s.io | sh -
+
+# Get the token for additional nodes
+sudo cat /var/lib/rancher/k3s/server/node-token
+
+# On additional servers (k3s-server-2, k3s-server-3)
+curl -sfL https://get.k3s.io | K3S_TOKEN="&lt;token&gt;" \
+K3S_URL="https://10.10.10.21:6443" sh -
+
+# On agents (k3s-agent-1, k3s-agent-2, k3s-agent-3)
+curl -sfL https://get.k3s.io | K3S_TOKEN="&lt;token&gt;" \
+K3S_URL="https://10.10.10.21:6443" sh -</code></pre>
+
+                <p>Replace <code>10.10.10.21</code> with the actual IP of your first control plane node, and <code>&lt;token&gt;</code> with the token from <code>sudo cat /var/lib/rancher/k3s/server/node-token</code></p>
+
+                <h2>GitLab Integration and CI/CD Setup</h2>
+
+                <h3>Setting Up GitLab Repository</h3>
+
+                <p>Create a GitLab repository to store all your cluster configurations:</p>
+
+                <ol>
+                    <li>Navigate to gitlab.com or your self-hosted GitLab</li>
+                    <li>Create new project: <code>kubernetes-homelab</code></li>
+                    <li>Initialize with README</li>
+                    <li>Clone to your local machine</li>
+                </ol>
+
+                <h3>Repository Structure</h3>
+
+                <p>Organize your GitOps repository with this structure:</p>
+
+                <pre><code>kubernetes-homelab/
+├── .gitlab-ci.yml              # CI/CD pipeline
+├── cluster/                    # Cluster configuration
+│   ├── infrastructure/         # Storage, networking
+│   ├── argocd/                 # ArgoCD config
+│   └── namespaces/             # App namespaces
+├── apps/                       # Application code
+│   ├── app1/
+│   └── app2/
+└── docs/                       # Documentation</code></pre>
+
+                <h3>GitLab CI/CD Pipeline Example</h3>
+
+                <p>Create <code>.gitlab-ci.yml</code> to automate your cluster deployments:</p>
+
+                <pre><code>stages:
+  - validate
+  - test
+  - deploy
+
+validate-manifests:
+  stage: validate
+  image: alpine/helm:latest
+  script:
+    - helm lint cluster/
+    - kubectl apply --dry-run=client -f cluster/
+
+test-manifests:
+  stage: test
+  image: alpine/k8s:latest
+  script:
+    - kubectl apply --dry-run=server -f cluster/
+    - echo "Manifests validated successfully"
+
+deploy-cluster:
+  stage: deploy
+  image: alpine/k8s:latest
+  only:
+    - main
+  script:
+    - kubectl apply -f cluster/
+    - echo "Deployment complete"</code></pre>
+
+                <p>This pipeline automatically validates your Kubernetes manifests whenever you push to GitLab, preventing invalid configurations from being deployed.</p>
+
+                <h2>Longhorn Distributed Storage Setup</h2>
+
+                <h3>Why Longhorn for Your 6-Node Cluster</h3>
+
+                <p>Longhorn provides distributed persistent storage across your 6 nodes, automatically replicating data for high availability. Unlike traditional NFS, Longhorn is cluster-aware and integrates deeply with Kubernetes.</p>
+
+                <h3>Installing Longhorn</h3>
+
+                <p>From your local machine with kubectl access:</p>
+
+                <pre><code># Add Longhorn Helm repository
+helm repo add longhorn https://charts.longhorn.io
+helm repo update
+
+# Install Longhorn with 3-replica default
+helm install longhorn longhorn/longhorn \
+  --namespace longhorn-system \
+  --create-namespace</code></pre>
+
+                <p>Wait 1-2 minutes for Longhorn pods to be ready:</p>
+
+                <pre><code>kubectl get pods -n longhorn-system</code></pre>
+
+                <h3>Accessing Longhorn UI</h3>
+
+                <p>Port-forward to access the Longhorn dashboard:</p>
+
+                <pre><code>kubectl port-forward -n longhorn-system svc/longhorn-frontend 8080:80</code></pre>
+
+                <p>Then open <code>http://localhost:8080</code> to view your storage dashboard</p>
+
+                <h3>Using Longhorn in Your Applications</h3>
+
+                <p>Create a PersistentVolumeClaim that uses Longhorn:</p>
+
+                <pre><code>apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 10Gi</code></pre>
+
+                <p>Your applications can now request persistent storage that automatically replicates across 3 nodes for high availability.</p>
+
+                <h2>ArgoCD GitOps Deployment</h2>
+
+                <h3>Installing ArgoCD</h3>
+
+                <p>ArgoCD watches your GitLab repository and automatically deploys changes:</p>
+
+                <pre><code># Create namespace
+kubectl create namespace argocd
+
+# Install ArgoCD
+kubectl apply -n argocd -f \
+  https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml</code></pre>
+
+                <h3>Accessing ArgoCD UI</h3>
+
+                <p>Get the initial admin password:</p>
+
+                <pre><code>kubectl -n argocd get secret argocd-initial-admin-secret \
+  -o jsonpath="{.data.password}" | base64 -d</code></pre>
+
+                <p>Port-forward to ArgoCD:</p>
+
+                <pre><code>kubectl port-forward svc/argocd-server 8080:443 -n argocd</code></pre>
+
+                <p>Then access <code>https://localhost:8080</code> and login with username <code>admin</code> and the password from above.</p>
+
+                <h3>Connect GitLab Repository</h3>
+
+                <p>Configure ArgoCD to sync your GitLab repository through the Web UI:</p>
+
+                <ol>
+                    <li>Navigate to Settings → Repositories</li>
+                    <li>Click "Connect Repo"</li>
+                    <li>Enter your GitLab repository URL</li>
+                    <li>Add authentication credentials (SSH key or token)</li>
+                    <li>Test the connection</li>
+                </ol>
+
+                <h3>Create ArgoCD Application</h3>
+
+                <pre><code>apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cluster-config
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://gitlab.com/your-username/kubernetes-homelab.git
+    targetRevision: main
+    path: cluster
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true</code></pre>
+
+                <h3>GitOps Workflow in Action</h3>
+
+                <p>Now your complete deployment flow is:</p>
+
+                <ol>
+                    <li>Push manifests to GitLab repository</li>
+                    <li>GitLab CI/CD validates and runs tests</li>
+                    <li>ArgoCD detects the change in GitLab</li>
+                    <li>ArgoCD automatically deploys to your 6-node cluster</li>
+                </ol>
+
+                <h2>Verifying Your Complete Setup</h2>
+
+                <h3>Check All 6 Nodes</h3>
+
+                <p>Verify all nodes are ready and running k3s:</p>
+
+                <pre><code>kubectl get nodes</code></pre>
+
+                <p>Expected output showing 6 Ready nodes:</p>
+
+                <pre><code>NAME           STATUS   ROLES              AGE   VERSION
+k3s-server-1   Ready    control-plane      5m    v1.28.x+k3s1
+k3s-server-2   Ready    control-plane      4m    v1.28.x+k3s1
+k3s-server-3   Ready    control-plane      3m    v1.28.x+k3s1
+k3s-agent-1    Ready    &lt;none&gt;             2m    v1.28.x+k3s1
+k3s-agent-2    Ready    &lt;none&gt;             1m    v1.28.x+k3s1
+k3s-agent-3    Ready    &lt;none&gt;             30s   v1.28.x+k3s1</code></pre>
+
+                <h3>Check Core Services</h3>
+
+                <p>Verify your stack is fully operational:</p>
+
+                <pre><code># Check Longhorn
+kubectl get pods -n longhorn-system
+
+# Check ArgoCD
+kubectl get pods -n argocd
+
+# Check storage classes
+kubectl get storageclass</code></pre>
+
+                <h3>Test Deployment</h3>
+
+                <p>Deploy a test application via Longhorn storage:</p>
+
+                <pre><code>kubectl run test-app --image=nginx
+kubectl get pods -o wide</code></pre>
+
+                <p>Verify it's scheduled on one of your 6 nodes</p>
+
+                <h2>Next Steps: Your Learning Path</h2>
+
+                <p>With your 6-node cluster fully operational and managed through GitOps:</p>
+
+                <ul>
+                    <li>Deploy applications through GitLab CI/CD</li>
+                    <li>Practice blue-green deployments via ArgoCD</li>
+                    <li>Learn Longhorn backup and disaster recovery</li>
+                    <li>Implement monitoring with Prometheus and Grafana</li>
+                    <li>Set up cross-cluster GitOps (multi-cluster patterns)</li>
+                    <li>Master advanced GitOps patterns with Flux or Helm</li>
+                </ul>
+
+                <h2>Version 2 Conclusion</h2>
+
+                <p>You've successfully upgraded from a 3-node cluster to a truly production-like 6-node Kubernetes cluster with GitOps workflows. Every change flows through GitLab and GitOps tools, mirroring real enterprise practices. Your cluster now demonstrates the complete modern application delivery lifecycle: write code → commit to Git → automated testing → automatic deployment.</p>
+
+                <p>This setup prepares you for roles in DevOps, SRE, and platform engineering where GitOps and Kubernetes expertise are essential. The upgrade from Version 1 (3-node) to Version 2 (6-node with GitOps) represents a significant step toward mastering production-grade Kubernetes environments.</p>
+
+                <hr>
+
                 <h2>🐛 Troubleshooting Common Issues</h2>
 
                 <p><strong>Node Shows NotReady</strong>: Check network connectivity and ensure K3s service is running.</p>
