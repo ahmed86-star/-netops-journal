@@ -147,6 +147,18 @@
             border-top: 2px solid var(--border-color);
             margin: 3rem 0;
         }
+        .version-card {
+            cursor: pointer;
+        }
+        .version-card:hover {
+            border-color: var(--primary-color) !important;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 255, 157, 0.2);
+        }
+        .version-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 16px rgba(0, 255, 157, 0.4);
+        }
     </style>
 </head>
 <body>
@@ -202,15 +214,49 @@
             <article class="blog-post">
                 <a href="index.html" class="back-button">← Back to Blog</a>
                 
-                <h1>🚀 Building a Production-Ready K3s Homelab with Proxmox and Terraform</h1>
+                <h1>🚀 Building Production-Ready K3s Clusters: From Basics to GitOps</h1>
 
                 <div style="text-align: center; margin: 2rem 0;">
                     <img src="images/kube display image.png" alt="Kubernetes Homelab" style="max-width: 100%; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);">
                 </div>
 
-                <p>Running Kubernetes at home doesn't have to be complex or expensive. In this guide, I'll walk you through my 3-node K3s cluster built on Proxmox VE, automated with Terraform, and running on Ubuntu Server 22.04.</p>
+                <p>Running Kubernetes at home doesn't have to be complex or expensive. This comprehensive guide documents my journey building K3s clusters on Proxmox VE—from a simple 3-node setup to a production-grade 6-node GitOps environment.</p>
 
-                <p>Whether you're learning Kubernetes, testing applications, or building a home lab for development, this setup provides a solid foundation that mimics production environments without breaking the bank.</p>
+                <div style="background: var(--bg-card); border: 2px solid var(--primary-color); border-radius: 12px; padding: 2rem; margin: 2rem 0;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1.5rem; text-align: center;">Choose Your Version</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                        <div class="version-card" style="background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 8px; padding: 1.5rem; transition: all 0.3s ease;">
+                            <h4 style="color: var(--primary-color); margin-bottom: 1rem;">Version 1: Foundation</h4>
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem;">3-Node K3s Cluster with Proxmox and Terraform</p>
+                            <ul style="color: var(--text-secondary); font-size: 0.9rem; list-style: none; padding-left: 0;">
+                                <li>✓ 1 Master + 2 Workers</li>
+                                <li>✓ Terraform Automation</li>
+                                <li>✓ Basic K3s Setup</li>
+                                <li>✓ Remote kubectl Access</li>
+                            </ul>
+                            <button onclick="showVersion('version1')" class="version-btn" style="margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--primary-color); color: var(--bg-primary); border: none; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; transition: all 0.3s ease;">View Version 1</button>
+                        </div>
+                        <div class="version-card" style="background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 8px; padding: 1.5rem; transition: all 0.3s ease;">
+                            <h4 style="color: var(--primary-color); margin-bottom: 1rem;">Version 2: Production</h4>
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem;">6-Node GitOps Cluster with CI/CD and Storage</p>
+                            <ul style="color: var(--text-secondary); font-size: 0.9rem; list-style: none; padding-left: 0;">
+                                <li>✓ 3 Control Planes + 3 Workers</li>
+                                <li>✓ GitLab CI/CD Pipeline</li>
+                                <li>✓ ArgoCD GitOps</li>
+                                <li>✓ Longhorn Distributed Storage</li>
+                            </ul>
+                            <button onclick="showVersion('version2')" class="version-btn" style="margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--primary-color); color: var(--bg-primary); border: none; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; transition: all 0.3s ease;">View Version 2</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VERSION 1: 3-Node Cluster -->
+                <div id="version1" style="display: block;">
+
+                <div style="background: var(--bg-card); border-left: 4px solid var(--primary-color); padding: 1.5rem; margin: 2rem 0; border-radius: 8px;">
+                    <h2 style="color: var(--primary-color); margin-bottom: 1rem;">Version 1: Building a 3-Node K3s Cluster with Proxmox and Terraform</h2>
+                    <p style="color: var(--text-secondary); margin: 0;">This is the foundation setup—perfect for learning Kubernetes basics and getting comfortable with cluster operations.</p>
+                </div>
 
                 <div class="info-box" style="background: var(--bg-card); border: 2px solid var(--primary-color); border-radius: 12px; padding: 2rem; margin: 2rem 0; text-align: center;">
                     <h3 style="color: var(--primary-color); margin-bottom: 1rem;">📂 GitHub Repository</h3>
@@ -694,7 +740,16 @@ kubectl get services</code></pre>
 
                 <p><strong>Snapshot VMs</strong>: Take Proxmox snapshots before major changes. They're lifesavers when experiments go wrong.</p>
 
-                <h2>Cluster Upgrade: Version 2 - Building a 6-Node Kubernetes Cluster with GitLab GitOps</h2>
+                </div>
+                <!-- END VERSION 1 -->
+
+                <!-- VERSION 2: 6-Node GitOps Cluster -->
+                <div id="version2" style="display: none;">
+
+                <div style="background: var(--bg-card); border-left: 4px solid var(--primary-color); padding: 1.5rem; margin: 2rem 0; border-radius: 8px;">
+                    <h2 style="color: var(--primary-color); margin-bottom: 1rem;">Version 2: Building a 6-Node Kubernetes Cluster with GitLab GitOps</h2>
+                    <p style="color: var(--text-secondary); margin: 0;">The production upgrade—enterprise-grade GitOps workflows with distributed storage and high availability.</p>
+                </div>
 
                 <p>After successfully running the 3-node K3s cluster, the next evolution is building a production-ready 6-node cluster managed through GitLab GitOps workflows. This upgrade combines k3s for lightweight orchestration, Proxmox for virtualization, and Longhorn for distributed persistent storage—all orchestrated through GitLab CI/CD pipelines and ArgoCD for declarative deployments.</p>
 
@@ -1072,6 +1127,15 @@ kubectl get pods -o wide</code></pre>
 
                 <p>This setup prepares you for roles in DevOps, SRE, and platform engineering where GitOps and Kubernetes expertise are essential. The upgrade from Version 1 (3-node) to Version 2 (6-node with GitOps) represents a significant step toward mastering production-grade Kubernetes environments.</p>
 
+                <div style="text-align: center; margin: 3rem 0;">
+                    <button onclick="showVersion('version1')" style="padding: 1rem 2rem; background: var(--bg-card); color: var(--primary-color); border: 2px solid var(--primary-color); border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1rem; transition: all 0.3s ease;">
+                        ← Back to Version 1: Foundation Setup
+                    </button>
+                </div>
+
+                </div>
+                <!-- END VERSION 2 -->
+
                 <hr>
 
                 <h2>🐛 Troubleshooting Common Issues</h2>
@@ -1091,6 +1155,12 @@ kubectl get pods -o wide</code></pre>
                 <p>The combination of Proxmox for virtualization, Terraform for automation, and K3s for Kubernetes gives you a powerful, reproducible infrastructure that you can tear down and rebuild at will.</p>
 
                 <p>What will you deploy on your cluster first? Let me know in the comments below!</p>
+
+                <div style="text-align: center; margin: 3rem 0;">
+                    <button onclick="showVersion('version2')" style="padding: 1rem 2rem; background: var(--primary-color); color: var(--bg-primary); border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1rem; transition: all 0.3s ease;">
+                        Upgrade to Version 2: 6-Node GitOps Cluster →
+                    </button>
+                </div>
 
                 <div style="background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-primary) 100%); border: 2px solid var(--primary-color); border-radius: 12px; padding: 3rem; margin: 3rem 0; text-align: center;">
                     <h3 style="color: var(--primary-color); margin-bottom: 1.5rem; font-size: 2rem;">🚀 Deploy Your Own K3s Cluster</h3>
@@ -1147,6 +1217,49 @@ kubectl get pods -o wide</code></pre>
     </footer>
 
     <script src="script.js"></script>
+    
+    <script>
+        // Version switching functionality
+        function showVersion(version) {
+            const version1 = document.getElementById('version1');
+            const version2 = document.getElementById('version2');
+            
+            if (version === 'version1') {
+                version1.style.display = 'block';
+                version2.style.display = 'none';
+                // Scroll to content
+                version1.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else if (version === 'version2') {
+                version1.style.display = 'none';
+                version2.style.display = 'block';
+                // Scroll to content
+                version2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // Check URL hash on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const hash = window.location.hash;
+            if (hash === '#version2') {
+                showVersion('version2');
+            } else if (hash === '#version1') {
+                showVersion('version1');
+            }
+            // Default is version1 (already displayed)
+        });
+
+        // Update URL hash when switching versions
+        document.querySelectorAll('button').forEach(function(button) {
+            button.addEventListener('click', function() {
+                const text = this.textContent.toLowerCase();
+                if (text.includes('version 1')) {
+                    window.location.hash = 'version1';
+                } else if (text.includes('version 2')) {
+                    window.location.hash = 'version2';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
 
