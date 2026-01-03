@@ -8,6 +8,26 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#00d9ff',
+                primaryTextColor: '#e0e0e0',
+                primaryBorderColor: '#00d9ff',
+                lineColor: '#00d9ff',
+                secondaryColor: '#1a1a2e',
+                tertiaryColor: '#16213e',
+                background: '#0f0f0f',
+                mainBkg: '#1a1a2e',
+                secondBkg: '#16213e',
+                textColor: '#e0e0e0',
+                fontSize: '14px'
+            }
+        });
+    </script>
     <style>
         .blog-post {
             max-width: 900px;
@@ -140,6 +160,24 @@
             margin: 1.5rem 0;
             border-radius: 4px;
         }
+        .mermaid-container {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        .mermaid {
+            display: inline-block;
+            margin: 0 auto;
+        }
+        .diagram-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -229,6 +267,29 @@
 
                 <p>Currently, I manage four distinct datastores to keep things organized:</p>
 
+                <div class="mermaid-container">
+                    <div class="diagram-title">📊 Logical Datastore Map</div>
+                    <pre class="mermaid">
+graph TD
+    NAS[Synology Volume] --> Root[/volume1/nas-archive/]
+    
+    Root --> D1[Ahmed2 - 20 LXCs]
+    Root --> D2[Backup-local]
+    Root --> D3[k3-cluster]
+    Root --> D4[nas-archive]
+    
+    Root --- Hidden([.chunks hidden folder])
+    
+    D1 -.-> Hidden
+    D2 -.-> Hidden
+    D3 -.-> Hidden
+    D4 -.-> Hidden
+    
+    note[All datastores deduplicate against the central .chunks folder]
+    Hidden --- note
+                    </pre>
+                </div>
+
                 <table>
                     <thead>
                         <tr>
@@ -274,6 +335,29 @@
                 <h2 id="implementation">Implementation: Synology Integration</h2>
 
                 <p>Integrating a <strong>Synology NAS</strong> as the storage backend for PBS is the most reliable way to scale.</p>
+
+                <div class="mermaid-container">
+                    <div class="diagram-title">🏗️ High-Level Architecture (PBS + Synology)</div>
+                    <pre class="mermaid">
+graph LR
+    subgraph Proxmox_Cluster [Proxmox VE Cluster]
+        N1[Node 1]
+        N2[Node 2]
+        N3[Node 3]
+    end
+
+    subgraph PBS_VM [PBS on Debian]
+        PBS_Logic[PBS Service]
+    end
+
+    subgraph Storage [Synology NAS]
+        NFS_Share[(NFS Share: /volume1/nas-archive)]
+    end
+
+    Proxmox_Cluster -- "Daily Incremental" --> PBS_Logic
+    PBS_Logic -- "Persistent Mount" --> NFS_Share
+                    </pre>
+                </div>
 
                 <h3>Step 1: Prepare the Synology NAS</h3>
 
@@ -340,6 +424,30 @@ echo "192.168.1.218:/volume1/proxmox-backup /mnt/nas-archive nfs vers=3,nofail,i
                 <h2 id="the-solution">The Solution: Tiered Backups</h2>
 
                 <p>I revised my strategy to be more efficient:</p>
+
+                <div class="mermaid-container">
+                    <div class="diagram-title">🔄 The Tiered "3-2-1" Strategy</div>
+                    <pre class="mermaid">
+flowchart TD
+    Start((Proxmox VMs/LXCs)) --> Tier1[Tier 1: Local DR]
+    Start --> Tier2[Tier 2: Offsite DR]
+
+    subgraph Local_Path [Fast Granular Recovery]
+        Tier1 --> PBS[Proxmox Backup Server]
+        PBS --> Synology_PBS[Synology: /pbs_datastore]
+        Synology_PBS -.-> Chunks{{.chunks folder: 250k+ files}}
+    end
+
+    subgraph Offsite_Path [Disaster Recovery]
+        Tier2 --> VZDump[Weekly VZDump .vma.zst]
+        VZDump --> Synology_Sync[Synology: /cloud_dump]
+        Synology_Sync -- "Synology Cloud Sync" --> GDrive[Google Drive]
+    end
+
+    style Chunks fill:#f96,stroke:#333,stroke-dasharray: 5 5
+    style GDrive fill:#4285F4,color:#fff
+                    </pre>
+                </div>
 
                 <ol>
                     <li><strong>PBS (Local DR):</strong> Handles daily, fast, incremental backups. This is for when I accidentally delete a file or a VM update fails.</li>
