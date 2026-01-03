@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proxmox Backup Strategy | PBS & Synology | Ahmed</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        .blog-post {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        .blog-post h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            text-shadow: var(--glow-primary);
+        }
+        .blog-post h2 {
+            font-size: 2rem;
+            margin: 3rem 0 1.5rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        .blog-post h3 {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+        .blog-post h4 {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--text-secondary);
+        }
+        .blog-post p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+        .blog-post strong {
+            color: var(--primary-color);
+        }
+        .blog-post ul, .blog-post ol {
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+            color: var(--text-secondary);
+        }
+        .blog-post li {
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+        .blog-post pre {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        .blog-post code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+        }
+        .blog-post img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 2rem 0;
+            border: 1px solid var(--border-color);
+        }
+        .blog-post table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+        }
+        .blog-post th, .blog-post td {
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            text-align: left;
+        }
+        .blog-post th {
+            background: var(--bg-card);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        .blog-post td {
+            color: var(--text-secondary);
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 2rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            border-color: var(--primary-color);
+            transform: translateX(-5px);
+        }
+        .toc {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        .toc h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        .toc ol {
+            margin: 1rem 0 0 0;
+            padding-left: 1.5rem;
+        }
+        .toc li {
+            margin-bottom: 0.5rem;
+        }
+        .toc a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .toc a:hover {
+            color: var(--primary-color);
+        }
+        blockquote {
+            border-left: 4px solid var(--primary-color);
+            background: var(--bg-card);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/netops.jpg" alt="NetOps Journal Logo" class="nav-logo-img">
+                <div class="nav-logo-text">
+                    <a href="index.html">NetOps Journal</a>
+                    <span class="nav-logo-tagline">Where networking meets automation.</span>
+                </div>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link">Categories</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="index.html#all">All</a></li>
+                        <li><a href="index.html#automation">Automation</a></li>
+                        <li><a href="index.html#opensource">Open-source</a></li>
+                        <li><a href="index.html#cisco">Cisco Technologies</a></li>
+                        <li><a href="index.html#juniper">Juniper Technologies</a></li>
+                        <li><a href="index.html#homeautomation">Home-Automation</a></li>
+                        <li><a href="index.html#homelab">Home-Lab</a></li>
+                        <li><a href="index.html#certifications">Certifications</a></li>
+                        <li><a href="projects.html">Projects</a></li>
+                        <li><a href="index.html#labs">Labs</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="index.html" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="projects.html" class="nav-link">Projects</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="about.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <span class="theme-toggle-icon">🎨</span>
+        <span class="theme-toggle-text">Change Theme</span>
+    </button>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <article class="blog-post">
+                <a href="index.html" class="back-button">← Back to Blog</a>
+                
+                <h1>🛡️ Proxmox Backup Strategy: PBS + Synology + Cloud Sync</h1>
+                
+                <div class="toc">
+                    <h3>📑 Table of Contents</h3>
+                    <ol>
+                        <li><a href="#introduction">Introduction</a></li>
+                        <li><a href="#proxmox-backup-server">Proxmox Backup Server (PBS)</a></li>
+                        <li><a href="#implementation">Implementation: Synology & PBS</a></li>
+                        <li><a href="#backup-plan">Backup Plan: The 3-2-1 Strategy</a></li>
+                        <li><a href="#lessons-learned">Lessons Learned: The ".chunks" Problem</a></li>
+                        <li><a href="#the-solution">The Solution: Tiered Backups</a></li>
+                        <li><a href="#summary">Summary</a></li>
+                        <li><a href="#what-comes-next">What Comes Next? Testing Recovery!</a></li>
+                        <li><a href="#references">References</a></li>
+                    </ol>
+                </div>
+
+                <hr>
+
+                <h2 id="introduction">Introduction</h2>
+
+                <p>This will be one of my final posts in the Proxmox series, but I couldn't finish without covering a crucial topic—backups. 🛡️</p>
+
+                <p>Let's be honest: backups are often an afterthought. Despite my background as a storage admin, I successfully ignored proper home lab backups for years—fortunately, without major incidents. 😅 But as my setup grew, I realized it was time to build a professional-grade strategy using <strong>Synology NAS</strong> and <strong>Proxmox Backup Server (PBS)</strong>.</p>
+
+                <hr>
+
+                <h2 id="proxmox-backup-server">Proxmox Backup Server</h2>
+
+                <p>While Proxmox has built-in backups, <strong>PBS</strong> is a game-changer. I run my PBS instance on a Debian base to manage my specific environment.</p>
+
+                <h3>My PBS Datastore Stats</h3>
+
+                <p>Currently, I manage four distinct datastores to keep things organized:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Datastore</th>
+                            <th>Size/Usage</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Ahmed2</strong></td>
+                            <td>1.8TB (2% Used)</td>
+                            <td>Primary storage for 20 LXC containers.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Backup-local</strong></td>
+                            <td>Active</td>
+                            <td>General storage for 20 containers and 3 VMs.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>k3-cluster</strong></td>
+                            <td>Dedicated</td>
+                            <td>Isolated backups for my Kubernetes cluster.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>nas-archive</strong></td>
+                            <td>3.5TB (5% Used)</td>
+                            <td><strong>Synology NFS share</strong> for long-term archiving.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p><strong>Why PBS?</strong></p>
+
+                <ul>
+                    <li><strong>Deduplication:</strong> Only unique data blocks are stored, saving massive amounts of space.</li>
+                    <li><strong>Incremental Backups:</strong> Only stores changes, making daily backups finish in seconds.</li>
+                    <li><strong>Encryption:</strong> Data is secure both at rest and during transit.</li>
+                </ul>
+
+                <hr>
+
+                <h2 id="implementation">Implementation: Synology Integration</h2>
+
+                <p>Integrating a <strong>Synology NAS</strong> as the storage backend for PBS is the most reliable way to scale.</p>
+
+                <h3>Step 1: Prepare the Synology NAS</h3>
+
+                <ol>
+                    <li><strong>Enable NFS:</strong> In DSM, go to <code>Control Panel > File Services > NFS</code> and enable the service.</li>
+                    <li><strong>NFS Permissions:</strong> In <code>Shared Folder</code>, edit your backup folder's permissions:
+                        <ul>
+                            <li><strong>Hostname:</strong> Your PBS IP.</li>
+                            <li><strong>Privilege:</strong> Read/Write.</li>
+                            <li><strong>Squash:</strong> Map all users to admin (prevents permission denied errors).</li>
+                            <li><strong>Security:</strong> sys.</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <h3>Step 2: Mount on PBS (Debian)</h3>
+
+                <p>In your PBS shell, create a persistent mount point so the NAS storage is always available:</p>
+
+                <pre><code># Create the local directory
+mkdir -p /mnt/nas-archive
+chown backup:backup /mnt/nas-archive
+
+# Mount the share
+mount -t nfs 192.168.1.218:/volume1/proxmox-backup /mnt/nas-archive
+
+# Make it persistent in /etc/fstab
+echo "192.168.1.218:/volume1/proxmox-backup /mnt/nas-archive nfs vers=3,nofail,intr,_netdev 0 0" >> /etc/fstab</code></pre>
+
+                <h3>Step 3: Add to PBS & Proxmox</h3>
+
+                <ol>
+                    <li><strong>In PBS Web UI:</strong> Go to <code>Datastores > Add Datastore</code> and point it to <code>/mnt/nas-archive</code>.</li>
+                    <li><strong>In Proxmox VE:</strong> Go to <code>Datacenter > Storage > Add > Proxmox Backup Server</code>.</li>
+                    <li><strong>Create Schedule:</strong> Set your backup window.</li>
+                </ol>
+
+                <blockquote>
+                    <p><strong>Pro Tip:</strong> Do not set any retention in the Proxmox job itself! Pruning is handled much more efficiently inside the PBS Datastore settings.</p>
+                </blockquote>
+
+                <hr>
+
+                <h2 id="backup-plan">Backup Plan: The 3-2-1 Strategy</h2>
+
+                <p>To ensure total data safety, I follow the 3-2-1 rule: <strong>3</strong> copies of data, on <strong>2</strong> different media, with <strong>1</strong> copy offsite.</p>
+
+                <ul>
+                    <li><strong>Local Copies:</strong> Live data on Proxmox nodes.</li>
+                    <li><strong>Second Media:</strong> Daily deduplicated backups on the <strong>Synology NAS</strong> via PBS.</li>
+                    <li><strong>Offsite:</strong> Encrypted copies synced to <strong>Google Drive</strong>.</li>
+                </ul>
+
+                <hr>
+
+                <h2 id="lessons-learned">Lessons Learned: The ".chunks" Problem</h2>
+
+                <p>What looked good on paper failed in practice. PBS stores data in a hidden <code>.chunks</code> folder. My environment currently has over <strong>250,000 files</strong> in that folder.</p>
+
+                <p>When I tried to use Synology <strong>Cloud Sync</strong> to push these to Google Drive, the system choked. Calculating changes for 250k tiny files took hours every single day. Furthermore, for a true Disaster Recovery (DR) scenario, I don't need the entire incremental history—I just need the latest working version of my VMs.</p>
+
+                <hr>
+
+                <h2 id="the-solution">The Solution: Tiered Backups</h2>
+
+                <p>I revised my strategy to be more efficient:</p>
+
+                <ol>
+                    <li><strong>PBS (Local DR):</strong> Handles daily, fast, incremental backups. This is for when I accidentally delete a file or a VM update fails.</li>
+                    <li><strong>Direct Dump (Cloud DR):</strong> I created a second backup job in Proxmox that <strong>bypasses PBS</strong>. It dumps a standard <code>.vma.zst</code> file directly to the Synology.</li>
+                    <li><strong>Cloud Sync:</strong> Synology Cloud Sync only watches the "Direct Dump" folder. Since it only contains a few large files, it syncs to <strong>Google Drive</strong> in minutes.</li>
+                </ol>
+
+                <hr>
+
+                <h2 id="summary">Summary</h2>
+
+                <p>By using <strong>PBS</strong> for speed and <strong>Synology Cloud Sync</strong> for offsite redundancy, I've built a system that is both fast and bulletproof. I no longer worry about the "hidden folder" sync issues, and my Google Drive storage remains clean with only the latest two versions of my critical infrastructure.</p>
+
+                <hr>
+
+                <h2 id="what-comes-next">What Comes Next? Testing Recovery!</h2>
+
+                <p>A backup plan is just a "hope" until you test it.</p>
+
+                <ul>
+                    <li><strong>Verify:</strong> Set up a "Verification Job" in PBS to run weekly to check for data corruption.</li>
+                    <li><strong>Test Restore:</strong> Once a month, restore a VM from Google Drive to a separate "Test Node" to ensure the offsite path is valid.</li>
+                </ul>
+
+                <hr>
+
+                <h2 id="references">References</h2>
+
+                <ul>
+                    <li><a href="https://pbs.proxmox.com/docs/" target="_blank">Proxmox Backup Server Documentation</a></li>
+                    <li><a href="https://www.youtube.com/watch?v=qms3ffm8H_4" target="_blank">Proxmox Backup Server Guide</a></li>
+                </ul>
+
+                <p>This video walk-through is an excellent resource for visualizing the exact steps of connecting Proxmox Backup Server to an external NFS share on a NAS.</p>
+
+                <hr>
+
+                <p><strong>Found this helpful? Share it with your homelab community! 🚀</strong></p>
+                
+                <a href="index.html" class="back-button">← Back to Blog</a>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="imprint.html">Imprint</a>
+            </div>
+            <div class="footer-copyright">
+                <p>Copyright © Ahmed 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
