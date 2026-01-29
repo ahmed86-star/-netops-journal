@@ -750,6 +750,21 @@ kubectl get services</code></pre>
 
                 <p>After months of planning, research, and countless late-night troubleshooting sessions, I've finally moved from simple setups to a sophisticated, high-availability environment. This guide documents my journey building a 6-node K3s cluster—a learning platform designed to mirror modern engineering workflows where every infrastructure change flows through Git.</p>
 
+                <figure style="margin: 1.5rem auto; text-align: center;">
+                    <img src="images/NODE%206.jpeg" alt="6-Node K3s Homelab Rack" style="max-width: 960px; width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); display: block; margin: 0 auto;">
+                    <figcaption style="color: var(--text-secondary); margin-top: 0.75rem;">6-node K3s homelab rack (front view)</figcaption>
+                </figure>
+
+                <figure style="margin: 1.5rem auto; text-align: center;">
+                    <img src="images/NODEE.jpeg" alt="6-Node K3s Homelab Rack (Alternate Angle)" style="max-width: 960px; width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); display: block; margin: 0 auto;">
+                    <figcaption style="color: var(--text-secondary); margin-top: 0.75rem;">6-node K3s homelab rack (alternate angle)</figcaption>
+                </figure>
+
+                <figure style="margin: 1.5rem auto; text-align: center;">
+                    <img src="images/diagram.png" alt="6-Node GitOps Architecture Diagram" style="max-width: 960px; width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); display: block; margin: 0 auto;">
+                    <figcaption style="color: var(--text-secondary); margin-top: 0.75rem;">6-node GitOps architecture diagram</figcaption>
+                </figure>
+
                 <h3>🏗️ Bare Metal 6-Node Kubernetes Architecture (DELL Mini PCs)</h3>
 
                 <p>To achieve high availability and enterprise-grade performance, I settled on using DELL Mini PCs. These are power-efficient yet robust enough to handle a multi-node K3s environment.</p>
@@ -767,6 +782,11 @@ kubectl get services</code></pre>
 
                 <h3>🌐 Kubernetes: Home Lab Architecture</h3>
 
+                <figure style="margin: 1.5rem auto; text-align: center;">
+                    <img src="images/KubernetesHome%20Lab%20Architecture.png" alt="Kubernetes Home Lab Architecture Diagram" style="max-width: 960px; width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); display: block; margin: 0 auto;">
+                    <figcaption style="color: var(--text-secondary); margin-top: 0.75rem;">Kubernetes home lab architecture overview</figcaption>
+                </figure>
+
                 <h4>The Infrastructure Flow</h4>
 
                 <p>In a nutshell, here is the normal flow when accessing any of the hosted services:</p>
@@ -781,6 +801,11 @@ kubectl get services</code></pre>
 
                 <h3>🔄 Kubernetes: Application Flow</h3>
 
+                <figure style="margin: 1.5rem auto; text-align: center;">
+                    <img src="images/flow.png" alt="Kubernetes application flow diagram" style="max-width: 960px; width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); display: block; margin: 0 auto;">
+                    <figcaption style="color: var(--text-secondary); margin-top: 0.75rem;">Request path from ingress to services and pods</figcaption>
+                </figure>
+
                 <p>When a request enters the cluster, it follows a logical path to reach the specific application:</p>
 
                 <ul>
@@ -791,9 +816,19 @@ kubectl get services</code></pre>
 
                 <h3>🤖 GitLab Integration &amp; CI/CD</h3>
 
+                <figure style="margin: 1.5rem auto; text-align: center;">
+                    <img src="images/gitlab.png" alt="GitLab CI/CD GitOps workflow diagram" style="max-width: 1100px; width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); display: block; margin: 0 auto;">
+                    <figcaption style="color: var(--text-secondary); margin-top: 0.75rem;">GitLab CI/CD to GitOps deployment flow</figcaption>
+                </figure>
+
                 <p>In this setup, the cluster is managed entirely through code. Every change is tracked, validated, and deployed automatically via my repository at ahmed86-star/k3s-homelab.</p>
 
                 <h4>GitLab Runner in Kubernetes</h4>
+
+                <figure style="margin: 1.5rem auto; text-align: center;">
+                    <img src="images/cluster%20connect%20.png" alt="GitLab agent connected to Kubernetes cluster" style="max-width: 1100px; width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); display: block; margin: 0 auto;">
+                    <figcaption style="color: var(--text-secondary); margin-top: 0.75rem;">GitLab agent connected to the Kubernetes cluster</figcaption>
+                </figure>
 
                 <p>I host a GitLab Runner directly within the cluster. This allows for seamless communication between the CI/CD pipelines and the Kubernetes API. When I commit changes in IntelliJ IDEA and push to GitLab, the runner triggers:</p>
 
@@ -804,6 +839,11 @@ kubectl get services</code></pre>
                 </ul>
 
                 <h3>🛠️ Kubernetes: Cluster Setup</h3>
+
+                <figure style="margin: 1.5rem auto; text-align: center;">
+                    <img src="images/k3s-ha.png" alt="K3s high availability cluster layout" style="max-width: 1100px; width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); display: block; margin: 0 auto;">
+                    <figcaption style="color: var(--text-secondary); margin-top: 0.75rem;">High-availability K3s cluster layout</figcaption>
+                </figure>
 
                 <p>Time to get our hands dirty. Before starting, ensure you have your Ubuntu servers running with SSH configured.</p>
 
@@ -821,6 +861,11 @@ kubectl get services</code></pre>
 
                 <h3>📊 Kubernetes: Administration</h3>
 
+                <figure style="margin: 1.5rem auto; text-align: center;">
+                    <img src="images/k9s.png" alt="k9s Kubernetes terminal dashboard" style="max-width: 1100px; width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); display: block; margin: 0 auto;">
+                    <figcaption style="color: var(--text-secondary); margin-top: 0.75rem;">k9s live view of cluster workloads</figcaption>
+                </figure>
+
                 <p>To keep everything running smoothly, I rely on a variety of administration tools:</p>
 
                 <ul>
@@ -828,6 +873,13 @@ kubectl get services</code></pre>
                     <li><strong>Lens / k9s</strong>: Excellent for deep, real-time terminal-based cluster management.</li>
                     <li><strong>Argo CD UI</strong>: My visual dashboard for tracking GitOps synchronization.</li>
                 </ul>
+
+                <p>Or we can also access our Kubernetes using <strong>Your Kubernetes Experience</strong>. <a href="https://headlamp.dev/" target="_blank" rel="noopener noreferrer">Headlamp</a> is a user-friendly Kubernetes UI focused on extensibility.</p>
+
+                <figure style="margin: 1.5rem auto; text-align: center;">
+                    <img src="images/headlamp%202.png" alt="Headlamp Kubernetes UI dashboard" style="max-width: 1100px; width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); display: block; margin: 0 auto;">
+                    <figcaption style="color: var(--text-secondary); margin-top: 0.75rem;">Headlamp provides a modern UI for cluster visibility</figcaption>
+                </figure>
 
                 <h3>🏁 Conclusion</h3>
 
