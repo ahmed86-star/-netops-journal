@@ -109,3 +109,41 @@ document.querySelectorAll('.blog-card, .about-card').forEach(card => {
     observer.observe(card);
 });
 
+// Clap button (one per user, stored locally)
+const clapButtons = document.querySelectorAll('.clap-button');
+clapButtons.forEach(button => {
+    const key = button.getAttribute('data-clap-key');
+    if (!key) return;
+
+    const countEl = document.querySelector(`.clap-count[data-clap-key="${key}"]`);
+    const countKey = `clapCount:${key}`;
+    const clickedKey = `clapClicked:${key}`;
+
+    let count = parseInt(localStorage.getItem(countKey) || '0', 10);
+    if (countEl) countEl.textContent = count.toString();
+
+    const clicked = localStorage.getItem(clickedKey) === 'true';
+    if (clicked) {
+        button.disabled = true;
+        button.style.opacity = '0.6';
+        button.style.cursor = 'not-allowed';
+    }
+
+    button.addEventListener('click', () => {
+        if (localStorage.getItem(clickedKey) === 'true') return;
+
+        count += 1;
+        localStorage.setItem(countKey, count.toString());
+        localStorage.setItem(clickedKey, 'true');
+        if (countEl) countEl.textContent = count.toString();
+
+        button.disabled = true;
+        button.style.opacity = '0.6';
+        button.style.cursor = 'not-allowed';
+        button.style.transform = 'scale(1.02)';
+        setTimeout(() => {
+            button.style.transform = '';
+        }, 150);
+    });
+});
+
