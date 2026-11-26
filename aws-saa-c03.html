@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Solutions Architect Associate (SAA-C03) | Ahmed</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        .blog-post {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        .blog-post h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            text-shadow: var(--glow-primary);
+            text-align: center;
+            line-height: 1.3;
+        }
+        .blog-post h2 {
+            font-size: 2rem;
+            margin: 3rem 0 1.5rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        .blog-post h3 {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-primary);
+        }
+        .blog-post h4 {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--text-secondary);
+        }
+        .blog-post p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+        .blog-post strong {
+            color: var(--primary-color);
+        }
+        .blog-post ul, .blog-post ol {
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+            color: var(--text-secondary);
+        }
+        .blog-post li {
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+        .blog-post a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .blog-post a:hover {
+            text-decoration: underline;
+        }
+        .score-banner {
+            text-align: center;
+            margin: 0 0 2.5rem;
+            padding: 2.25rem 1.5rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 2px solid var(--primary-color);
+            box-shadow: var(--glow-primary);
+        }
+        .score-banner .score {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', monospace;
+            font-size: 3.25rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-shadow: var(--glow-primary);
+            letter-spacing: 0.04em;
+            line-height: 1.1;
+            margin-bottom: 0.75rem;
+        }
+        .score-banner .score-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin: 0;
+        }
+        .score-banner .score-meta {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-top: 1.25rem;
+        }
+        .score-banner .pill {
+            padding: 0.45rem 0.9rem;
+            border: 1px solid var(--border-color);
+            border-radius: 999px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+        }
+        .credly-badge {
+            text-align: center;
+            margin: 0 0 2rem;
+            padding: 2rem 1.5rem 1.5rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+        }
+        .credly-badge img {
+            width: 240px;
+            max-width: 70%;
+            height: auto;
+            margin: 0 auto 1rem;
+            display: block;
+            border: none;
+            background: transparent;
+        }
+        .score-report {
+            margin: 0 0 2.5rem;
+            text-align: center;
+        }
+        .score-report img {
+            width: 100%;
+            max-width: 820px;
+            height: auto;
+            margin: 0 auto;
+            display: block;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+        }
+        .blog-post table.score-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            display: table;
+            overflow: hidden;
+        }
+        .blog-post th, .blog-post td {
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            text-align: left;
+        }
+        .blog-post th {
+            background: var(--bg-card);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        .blog-post td {
+            color: var(--text-secondary);
+        }
+        .dialogue {
+            background: var(--bg-card);
+            border-left: 4px solid var(--primary-color);
+            padding: 1.25rem 1.5rem;
+            margin: 1.25rem 0 1.75rem;
+            border-radius: 8px;
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+        .key-takeaway {
+            background: var(--bg-card);
+            border-left: 4px solid var(--primary-color);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+        .key-takeaway blockquote {
+            margin: 0;
+            font-style: italic;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 2rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            border-color: var(--primary-color);
+            transform: translateX(-5px);
+            text-decoration: none;
+        }
+        hr {
+            border: none;
+            border-top: 2px solid var(--border-color);
+            margin: 3rem 0;
+        }
+        @media (max-width: 700px) {
+            .blog-post h1 {
+                font-size: 1.75rem;
+            }
+            .blog-post h2 {
+                font-size: 1.45rem;
+            }
+            .score-banner .score {
+                font-size: 2.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/netops.jpg" alt="NetOps Journal Logo" class="nav-logo-img">
+                <div class="nav-logo-text">
+                    <a href="index.html">NetOps Journal</a>
+                    <span class="nav-logo-tagline">Where networking meets automation.</span>
+                </div>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link">Categories</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="index.html#all">All</a></li>
+                        <li><a href="index.html#automation">Automation</a></li>
+                        <li><a href="index.html#opensource">Open-source</a></li>
+                        <li><a href="index.html#cisco">Cisco Technologies</a></li>
+                        <li><a href="index.html#juniper">Juniper Technologies</a></li>
+                        <li><a href="index.html#homeautomation">Home-Automation</a></li>
+                        <li><a href="index.html#homelab">Home-Lab</a></li>
+                        <li><a href="index.html#certifications">Certifications</a></li>
+                        <li><a href="projects.html">Projects</a></li>
+                        <li><a href="index.html#labs">Labs</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="index.html" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="projects.html" class="nav-link">Projects</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="about.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <span class="theme-toggle-icon">🎨</span>
+        <span class="theme-toggle-text">Change Theme</span>
+    </button>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <article class="blog-post">
+                <a href="index.html" class="back-button">← Back to Blog</a>
+
+                <h1>AWS Certified Solutions Architect — Associate (SAA-C03)</h1>
+
+                <div class="credly-badge">
+                    <a href="https://www.credly.com/badges/69c242d3-8089-4ab1-a337-5e66076ea873/public_url" target="_blank" rel="noopener noreferrer">
+                        <img src="images/aws-saa-badge.png" alt="AWS Certified Solutions Architect – Associate badge">
+                    </a>
+                    <p>
+                        <a href="https://www.credly.com/badges/69c242d3-8089-4ab1-a337-5e66076ea873/public_url" target="_blank" rel="noopener noreferrer">View badge on Credly</a>
+                    </p>
+                </div>
+
+                <div class="score-banner">
+                    <div class="score">817</div>
+                    <p class="score-label">Passed on November 21, 2026 after 1 month and 2 weeks of prep</p>
+                    <div class="score-meta">
+                        <span class="pill">SAA-C03</span>
+                        <span class="pill">6 weeks</span>
+                        <span class="pill">Online proctored</span>
+                    </div>
+                </div>
+
+                <figure class="score-report">
+                    <img src="images/aws-saa-score-report.jpg" alt="AWS notice of exam results: Abdirahman Ahmed, score 817, pass, exam date November 21, 2026">
+                </figure>
+
+                <p>If you are reading this, you are either preparing for the AWS Certified Solutions Architect — Associate exam or deciding whether to sit it. I cleared SAA-C03 with a score of 817 on November 21, 2026. The path there included confusion, self-doubt, mock tests I failed, and a lot of conversations with AI. AI became my personal tutor.</p>
+
+                <p>Here is exactly what worked across those six weeks.</p>
+
+                <hr>
+
+                <h2>My Starting Point</h2>
+
+                <p>I was already using AWS at work: EC2, S3, IAM, EKS, CloudFront, and a few others. That experience got me into the console. It did not teach me how to choose.</p>
+
+                <p>SAA-C03 lives in that gap. The points come from knowing when S3, EFS, EBS, or FSx is the right call, and why that call fits the requirement in the question. I gave myself <strong>1 month and 2 weeks</strong> to close it.</p>
+
+                <hr>
+
+                <h2>Phase 1: The Foundation</h2>
+
+                <p>I started with a Udemy course that walks the exam domains and includes hands-on labs. The explanations are clear, and the labs put the services on screen so the names stop being abstract.</p>
+
+                <p><a href="https://www.udemy.com/course/aws-certified-solutions-architect-associate-hands-on/" target="_blank" rel="noopener noreferrer">AWS Certified Solutions Architect Associate Course</a></p>
+
+                <p>The course gave me a map of the exam. Watching it was the foundation. The first mock test showed me the holes in that map.</p>
+
+                <hr>
+
+                <h2>Phase 2: Mock Tests</h2>
+
+                <p>After the course I bought the practice exams from the same instructor.</p>
+
+                <p><a href="https://www.udemy.com/course/aws-certified-solutions-architect-associate-practice-tests-k/" target="_blank" rel="noopener noreferrer">AWS SAA Practice Tests</a></p>
+
+                <p>My first mock landed around <strong>65%</strong>. The passing score is 720 out of 1000, roughly 72%, so I was short. The questions were harder than the videos had prepared me for, and the misses clustered around scenarios where more than one answer could work in real life.</p>
+
+                <p>AWS often offers several valid designs for the same problem. The exam asks for the one that best matches the constraint in the stem:</p>
+
+                <ul>
+                    <li>Cost optimization</li>
+                    <li>High availability</li>
+                    <li>Low latency</li>
+                    <li>Minimal operational overhead</li>
+                </ul>
+
+                <p>That is where the prep changed.</p>
+
+                <hr>
+
+                <h2>Phase 3: AI as My Tutor</h2>
+
+                <p>I used GitHub Copilot, on Claude, as a standing AWS tutor. Across the rest of the six weeks, that was the difference between recognizing a service and being able to defend a choice.</p>
+
+                <h3>1. Conversational learning</h3>
+
+                <p>I stopped treating documentation as something to reread in silence. I asked the question the way I was actually stuck:</p>
+
+                <div class="dialogue">Explain the difference between CloudFront and Global Accelerator like I am a beginner. When would I use one over the other?</div>
+
+                <p>The replies came back with plain analogies I could reuse on the next question. Concepts stayed because I had argued with them, not because I had highlighted them.</p>
+
+                <h3>2. Every mock, discussed</h3>
+
+                <p>When I missed a question, or got it right and still felt unsure, I pasted it in and stayed on it:</p>
+
+                <div class="dialogue">I chose option B, but the correct answer is C. Explain why C is better and what I missed.</div>
+
+                <p>The goal was the reasoning. Memorizing the letter never survived the next scenario that swapped cost for latency.</p>
+
+                <h3>3. The topics that kept slipping</h3>
+
+                <p>A few comparisons refused to stick: SQS versus Kinesis, CloudFront versus Global Accelerator, and the database options. I kept those threads open until the picture was simple enough to remember under a timer.</p>
+
+                <p>The line that finally locked CloudFront and Global Accelerator for me: Global Accelerator is a fast lane into AWS, and CloudFront is a local cache. Once I had that, the question stems started sorting themselves.</p>
+
+                <h3>4. A cheatsheet built from my own misses</h3>
+
+                <p>Near the end I asked the AI to compile our conversations into one cheatsheet: comparisons, decision rules, and the exact points I had gotten wrong. It was built from my gaps. I revised it the night before the exam, and it carried me through the questions that used to blur together.</p>
+
+                <hr>
+
+                <h2>The Climb</h2>
+
+                <p>The whole window was six weeks. Videos, mocks, and those AI discussions ran together, and the practice scores moved like this:</p>
+
+                <table class="score-table">
+                    <thead>
+                        <tr>
+                            <th>Point in the 6 weeks</th>
+                            <th>Mock score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Week 2</td>
+                            <td>~65%</td>
+                        </tr>
+                        <tr>
+                            <td>Week 3</td>
+                            <td>~70%</td>
+                        </tr>
+                        <tr>
+                            <td>Week 5</td>
+                            <td>~75%</td>
+                        </tr>
+                        <tr>
+                            <td>Week 6</td>
+                            <td>~80%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>Once the practice tests were landing around 80%, I booked the exam.</p>
+
+                <hr>
+
+                <h2>Registering</h2>
+
+                <p>Registration goes through the <a href="https://www.aws.training/certification" target="_blank" rel="noopener noreferrer">AWS Certification portal</a>. There are two ways to sit it:</p>
+
+                <ol>
+                    <li><strong>Testing center.</strong> A physical Pearson VUE site.</li>
+                    <li><strong>Online proctored.</strong> From home, with a proctor watching the session.</li>
+                </ol>
+
+                <p>I chose the online proctored exam for convenience.</p>
+
+                <hr>
+
+                <h2>What I Would Repeat</h2>
+
+                <div class="key-takeaway">
+                    <blockquote>
+                        Six weeks was enough because the work was specific. The course built the map, the mocks showed the gaps, and AI turned every miss into a rule I could reuse. The cheatsheet the night before was a record of my own confusion, and that is what I remembered in the exam.
+                    </blockquote>
+                </div>
+
+                <p>If you already touch AWS at work, the exam will still feel new. Budget the short window for decisions, not for another tour of the console. Sit mocks early, and do not leave a wrong answer until you can explain the better one out loud.</p>
+
+                <div style="text-align: center; margin: 3rem 0;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1.5rem;">Ready to sit SAA-C03?</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                        Pick a date, protect the six weeks, and study the questions you get wrong until the choice is obvious.
+                    </p>
+                    <a href="https://aws.amazon.com/certification/certified-solutions-architect-associate/" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 1rem 2rem; background: var(--primary-color); color: var(--bg-primary); text-decoration: none; border-radius: 8px; font-weight: 700; transition: all 0.3s ease; box-shadow: var(--glow-primary);">
+                        AWS Solutions Architect — Associate
+                    </a>
+                </div>
+
+                <p style="text-align: center;"><strong>Good luck on your certification journey.</strong></p>
+
+                <a href="index.html" class="back-button">← Back to Blog</a>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="cookies.html">Cookie Policy</a>
+                <a href="imprint.html">Imprint</a>
+            </div>
+            <div class="footer-copyright">
+                <p>Copyright © Ahmed 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
