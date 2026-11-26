@@ -1,12 +1,12 @@
 # 🚀 Deploying NetOps Journal to Cloudflare Pages
 
-This guide will help you deploy your website to **ahmed1.live** using Cloudflare Pages.
+This guide will help you deploy your website to **ahmed1.dev** using Cloudflare Pages.
 
 ## 📋 Prerequisites
 
 - ✅ Git repository initialized (Done!)
 - ✅ GitHub account: [@ahmed86-star](https://github.com/ahmed86-star)
-- ✅ Cloudflare account with domain: `ahmed1.live`
+- ✅ Cloudflare account with domain: `ahmed1.dev`
 - ✅ All files committed to Git
 
 ## 🎯 Deployment Steps
@@ -75,7 +75,7 @@ This guide will help you deploy your website to **ahmed1.live** using Cloudflare
 1. **Add Custom Domain:**
    - In your Cloudflare Pages project, go to **"Custom domains"** tab
    - Click **"Set up a custom domain"**
-   - Enter: `ahmed1.live`
+   - Enter: `ahmed1.dev`
    - Click **"Continue"**
 
 2. **Configure DNS (if needed):**
@@ -84,13 +84,13 @@ This guide will help you deploy your website to **ahmed1.live** using Cloudflare
    - Click **"Activate domain"**
 
 3. **Add www subdomain (optional):**
-   - Repeat the process for: `www.ahmed1.live`
+   - Repeat the process for: `www.ahmed1.dev`
    - This will redirect `www` to your main domain
 
 4. **Wait for SSL:**
    - Cloudflare automatically provisions SSL certificates
    - This takes 5-15 minutes
-   - Your site will be available at: `https://ahmed1.live` 🎉
+   - Your site will be available at: `https://ahmed1.dev` 🎉
 
 ## 🔄 Future Updates
 
@@ -195,7 +195,7 @@ Your site automatically gets:
 - [ ] Git repository initialized
 - [ ] Code pushed to GitHub
 - [ ] Cloudflare Pages connected
-- [ ] Custom domain `ahmed1.live` configured
+- [ ] Custom domain `ahmed1.dev` configured
 - [ ] SSL certificate active
 - [ ] Site live and accessible
 
@@ -209,7 +209,7 @@ Your site automatically gets:
 
 ---
 
-**🎊 Congratulations!** Your NetOps Journal is now live on `ahmed1.live`!
+**🎊 Congratulations!** Your NetOps Journal is now live on `ahmed1.dev`!
 
 Share it with the world! 🌍✨
 
